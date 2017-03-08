@@ -1,32 +1,33 @@
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+-------------------------------buffer.vhd-----------------------------------------
 
-entity shift_register is
-  port(clk, reset : in std_logic;
-	shift_in : in std_logic;
-	shift_out : out std_logic);
-end shift_register;
+library ieee;
+use ieee.std_logic_1164.all;
 
-architecture A of shift_register is
- signal reg :std_logic_vector(2 downto 0);
 
-begin
-  P_shift_register : process (clk)
-  begin
-    if (clk'event and clk = '1') then
-	if reset = '1' then
-	 reg <= (others => '0');
-	else
-		for i in 0 to 1 loop
-			shift_out(i) <= shift_out(i);
-		end loop
-        for i in 2 to 14 loop 
-            shift_out(i+1) <= shift_out(i); 
-        end loop; 
-			shift_out(2) <= '0';
-       end if;
+entity buff is
+  generic (
+    N : positive);
+  port (
+    Buff_in  : in  std_logic_vector(N-1 downto 0);
+    Buff_OE  : in  std_logic;
+    Clk      : in  std_logic;
+    Reset    : in  std_logic;
+    Buff_out : out std_logic_vector(N-1 downto 0));
+
+end entity buff;
+
+architecture A of buff is
+
+begin  -- architecture A
+
+  P_buff : process (Clk)
+  begin  -- process P_buff
+    if(Clk = '1' and Clk'event) then
+      if Reset = '1' then
+        Buff_out <= (others => '0');
+      elsif Buff_OE = '1' then
+        Buff_out <= Buff_in;
+      end if;
     end if;
-  end process P_shift_register;
-        shift_out <= reg(2);
-end A;
+  end process P_buff;
+end architecture A;
