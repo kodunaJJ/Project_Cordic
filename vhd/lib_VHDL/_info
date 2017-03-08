@@ -1,0 +1,32 @@
+m255
+K4
+z2
+13
+cModel Technology
+Z0 d/tp/xph2sei/xph2sei414/MiniProjet/vhd
+!s112 0.1
+!i10d 8192
+!i10e 25
+!i10f 100
+Ecoordinate_z_calc
+w1488816400
+Z1 DPx4 ieee 11 numeric_std 0 22 WES[o8HS0jHV[MIXQk2Ha1
+Z2 DPx3 std 6 textio 0 22 Y8d?=bLj9m4jiPLbo;>GT0
+Z3 DPx4 ieee 14 std_logic_1164 0 22 1bm?@Gd;P>[>_lN8Do9gP3
+Z4 d/tp/xph2sei/xph2sei414/MiniProjet/vhd
+8coordinate_z_calc.vhd
+Fcoordinate_z_calc.vhd
+l0
+L5
+Vc=Nan42CCf3WBYj`KNMUZ0
+!s100 BC>YElXcJI@Bj_eo_8M>I2
+Z5 OL;C;10.2c;57
+32
+!s110 1488817226
+!i10b 1
+!s108 1488817226.265116
+!s90 +acc|-work|lib_VHDL|coordinate_z_calc.vhd|
+!s107 coordinate_z_calc.vhd|
+!i111 0
+o+acc -work lib_VHDL
+tOptimize_1164 0 Explicit 1 IgnoreVitalErrors 1 Show_VitalChecksWarnings 0
