@@ -1,8 +1,9 @@
+
 library IEEE;
 use IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity z_calc is
+entity Z_calc is
   generic (
     N : positive := 16);
   port (
@@ -14,11 +15,11 @@ entity z_calc is
     Clk       : in  std_logic;
     Reset     : in  std_logic;
     Msb       : out std_logic);
-end z_calc;
+end Z_calc;
 
-architecture A of z_calc is
+architecture A of Z_calc is
 
-  component buff
+  component Buff
     generic (
       N : positive);
     port(Buff_in  : in  std_logic_vector(N-1 downto 0);
@@ -28,11 +29,11 @@ architecture A of z_calc is
          Buff_Out : out std_logic_vector(N-1 downto 0));
   end component;
 
-  component mux2x1
+  component Mux2x1
     generic (
       N : positive);
-    port (IN1, IN2 : in  std_logic_vector(N-1 downto 0);
-          SEL      : in  std_logic;
+    port (In1, In2 : in  std_logic_vector(N-1 downto 0);
+          Sel      : in  std_logic;
           Mux_out  : out std_logic_vector (N-1 downto 0));
   end component;
 
@@ -42,7 +43,7 @@ architecture A of z_calc is
       N : positive);
     port (
       A, B : in  std_logic_vector(N-1 downto 0);  --vrai ou pas
-      CMD  : in  std_logic;
+      Cmd  : in  std_logic;
       S    : out std_logic_vector(N-1 downto 0));
   end component;
 
@@ -55,17 +56,17 @@ begin  -- A
 
   Msb <= Mux_out(N-1);
   
-  U1 : mux2x1
+  U1 : Mux2x1
     generic map (
       N => 16)
     port map (
-      IN1     => Z0,
-      IN2     => Alu_out,
-      SEL     => Sel,
+      In1     => Z0,
+      In2     => Alu_out,
+      Sel     => Sel,
       Mux_out => Mux_out
       );
 
-  U2 : buff
+  U2 : Buff
     generic map (
       N => 16)
     port map (
@@ -81,6 +82,6 @@ begin  -- A
     port map (
       A   => Buff_Out,
       B   => Angle,
-      CMD => sign,
+      Cmd => Sign,
       S   => Alu_out);
 end A;
