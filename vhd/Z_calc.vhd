@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 
 entity Z_calc is
   generic (
-    N : positive := 16);
+    N : positive);
   port (
     Z0        : in  std_logic_vector(N-1 downto 0);
     Angle     : in  std_logic_vector(N-1 downto 0);

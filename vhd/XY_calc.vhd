@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity XY_calc is
   generic (
-    N : positive := 16);
+    N : positive);
   port (
     Clk           : in  std_logic;
     Reset         : in  std_logic;
@@ -69,7 +69,7 @@ architecture A of XY_calc is
   signal Shifter_out_2 : std_logic_vector(N-1 downto 0);   -- maker "2" pink
   signal A_2           : std_logic_vector (N-1 downto 0);  -- maker "4" pink
   signal Buff_in_3     : std_logic_vector(N-1 downto 0);   -- maker "5" pink 
-  signal Shifter_out_1 : std_logic_vector (N-1 downto 0); 
+  signal Shifter_out_1 : std_logic_vector (N-1 downto 0);
 begin  -- A
   U1 : Mux2x1
     generic map(N => 16)
@@ -112,17 +112,17 @@ begin  -- A
       Cmd => '1',
       S   => Buff_in_2);
 
-  U6 : Buff
+  U6 : Buff                             -- ALU 1 Buffer
     generic map (N => 16)
     port map (
       Buff_in  => Buff_in_2,
       Buff_out => A_2,
-      Buff_OE  => Sign,
+      Buff_OE  => Sign,                 -- ?? error ??
       Clk      => Clk,
       Reset    => Reset
       );
 
-  U7 : ALU
+  U7 : ALU                              -- ALU 2 
     generic map (N => 16)
     port map (
       A   => A_2,
@@ -130,7 +130,7 @@ begin  -- A
       Cmd => Sign,
       S   => Buff_in_3
       );
-  U8 : Buff
+  U8 : Buff                             --  Output Buffer
     generic map (N => 16)
     port map (
       Buff_in  => A_2,
@@ -138,6 +138,6 @@ begin  -- A
       Buff_OE  => Out_Enable,
       Clk      => Clk,
       Reset    => Reset);
- 
-  Data_out_i <= Shifter_out_1; 
+
+  Data_out_i <= Shifter_out_1;
 end A;
