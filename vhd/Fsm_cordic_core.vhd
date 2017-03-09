@@ -13,6 +13,8 @@ entity Fsm_cordic_core is
        Buff_IE_Z   : out std_logic;
        Data_sel    : out std_logic;
        Rom_Address : out std_logic_vector(3 downto 0);
+       Shift_count_1 : out std_logic_vector(3 downto 0);
+       Shift_count_2 : out std_logic_vector(3 downto 0);
        Buff_OE     : out std_logic);
 end Fsm_cordic_core;
 
