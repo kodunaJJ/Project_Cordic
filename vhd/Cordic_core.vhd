@@ -56,6 +56,7 @@ architecture A of Cordic_core is
       Start_cal      : in  std_logic;
       iteration      : in  std_logic_vector(3 downto 0);
       Counter_enable : out std_logic;
+      Counter_reset  : out std_logic;
       End_cal        : out std_logic;
       Buff_IE_X_Y    : out std_logic;
       Buff_IE_Z      : out std_logic;
@@ -112,6 +113,7 @@ architecture A of Cordic_core is
   signal X_shifted     : std_logic_vector(N-1 downto 0);
   signal Clk_counter   : std_logic;
   signal Count_enable  : std_logic;
+  signal Count_reset   : std_logic;
   signal Sign_b        : std_logic;
 
 
@@ -183,6 +185,7 @@ begin
     Start_cal      => Start_cal,
     iteration      => Iter_count,
     Counter_enable => Count_enable,
+    Counter_reset  => Count_reset,
     End_cal        => End_cal,
     Buff_IE_X_Y    => Buff_IE_X_Y_intern,
     Buff_IE_Z      => Buff_IE_Z_intern,
@@ -205,7 +208,7 @@ begin
       P => 4, N => 16)
     port map (
       Clk          => Clk_counter,
-      Reset        => Reset,
+      Reset        => Count_reset,
       Count_enable => Count_enable,
       Count_out    => Iter_count
       );
