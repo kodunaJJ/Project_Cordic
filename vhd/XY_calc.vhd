@@ -75,7 +75,7 @@ begin  -- A
     generic map(N => 16)
     port map (
       In1     => Data_in,
-      In2     => Alu_out_2,
+      In2     => Buff_in_3,
       Sel     => Sel,                                      ---????????
       Mux_out => Buff_in);
 

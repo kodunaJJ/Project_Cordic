@@ -54,7 +54,7 @@ architecture A of Z_calc is
 
 begin  -- A
 
-  Msb <= Mux_out(N-1);
+  Msb <= Buff_out(N-1);
   
   U1 : Mux2x1
     generic map (
