@@ -5,61 +5,67 @@ use IEEE.numeric_std.all;
 
 
 entity Fsm_cordic_core is
-  port(Clk         : in  std_logic;
-       Reset       : in  std_logic;
-       Start_cal   : in  std_logic;
-       End_cal     : out std_logic;
-       Buff_IE_X_Y : out std_logic;
-       Buff_IE_Z   : out std_logic;
-       Data_sel    : out std_logic;
-       Rom_Address : out std_logic_vector(3 downto 0);
-       Shift_count_1 : out std_logic_vector(3 downto 0);
-       Shift_count_2 : out std_logic_vector(3 downto 0);
-       Buff_OE     : out std_logic);
+  port(Clk            : in  std_logic;
+       Reset          : in  std_logic;
+       Start_cal      : in  std_logic;
+       iteration      : in  std_logic_vector(3 downto 0);
+       Counter_enable : out std_logic;
+       Counter_reset  : out std_logic;
+       End_cal        : out std_logic;
+       Buff_IE_X_Y    : out std_logic;
+       Buff_IE_Z      : out std_logic;
+       Data_sel       : out std_logic;
+       Rom_Address    : out std_logic_vector(3 downto 0);
+       Shift_count_1  : out std_logic_vector(3 downto 0);
+       Shift_count_2  : out std_logic_vector(3 downto 0);
+       Buff_OE        : out std_logic);
 end Fsm_cordic_core;
 
 -- Machine à états contrôlant le calcul des coordonnées.
 
-architecture A of FSM is
+architecture A of Fsm_cordic_core is
   type STATE is (Idle, Calculation);
 
-  signal Current_State, Next_State         : State;
-  signal Current_iteration, Next_iteration : unsigned(15 downto 0);
-  signal iteration                         : unsigned(3 downto 0);
+  signal Current_State, Next_State : State;
+  signal iteration_intern          : unsigned(iteration'range);
+  signal iteration_intern_incd     : unsigned(iteration'range);
 
 begin
 
-  Rom_Address <= std_logic_vector(iteration);
-  iteration   <= Current_iteration; -- a changer avec schema donner par le prof
+  Rom_Address           <= std_logic_vector(iteration);
+  iteration_intern      <= unsigned(iteration);  -- a changer avec schema donner par le prof
+  Shift_count_1         <= iteration;
+  iteration_intern_incd <= iteration_intern + 2;
+  Shift_count_2         <= std_logic_vector(iteration_intern_incd);
 
-  -- comment incrementer i tous les deux cycles ?? ajout buffer pour rom_out ?
+  -- comment decaler de i + 2 lorsque i=14 et 15 ? parametrer shifer
+  -- differement ?
 
   P_STATE : process(Clk, Reset)
   begin
     if (Reset = '1') then
-      Current_State     <= Idle;
-      Current_iteration <= (others => '0');
+      Current_State <= Idle;
     elsif (Clk = '1' and Clk'event) then
-      Current_State     <= Next_State;
-      Current_iteration <= Next_iteration;
+      Current_State <= Next_State;
     end if;
   end process P_STATE;
 
-  P_FSM : process(Current_state, START_CAL, iteration)
+  P_FSM : process(Current_state, START_CAL, iteration_intern)
   begin
 
-    Next_iteration <= (others => '0');
-    Next_State     <= Idle;
-    Data_sel = '0';
-    End_cal = '1';
-    Buff_IE_X_Y = '0';
-    Buff_IE_Z = '0';
-    Buff_OE = '0';
+    Next_State <= Idle;
+    Data_sel <= '0';
+    End_cal <= '1';
+    Buff_IE_X_Y <= '0';
+    Buff_IE_Z <= '0';
+    Buff_OE <= '0';
+    Counter_enable <= '1';
+    Counter_reset <= '0';
 
     case Current_state is
 
       when Idle =>
-        if iteration = (others => '1') then
+        if iteration_intern = 15  then
           Buff_OE <= '1';
         end if;
 
@@ -67,24 +73,23 @@ begin
           Next_State <= Calculation;
         end if;
 
+        Counter_enable <= '0';
+        Counter_reset <= '1';
+
       when Calculation =>
         End_cal     <= '0';
         Buff_IE_X_Y <= '1';
         Next_State  <= Calculation;
-
-        if iteration(0) = '0' then
           Buff_IE_Z <= '1';
-        end if;
 
-        case iteration is
-          when "00000" =>
-            Next_iteration <= iteration + "00001";
-          when "11111" =>
+        case iteration_intern is
+          when "0000" =>
+            Data_sel <= '0';
+          when "1111" =>
             data_sel   <= '1';
             Next_State <= Idle;
           when others =>
-            data_sel       <= '1';
-            Next_iteration <= iteration + "00001";
+            Data_sel       <= '1';
         end case;
       when others =>
         Next_State <= Idle;

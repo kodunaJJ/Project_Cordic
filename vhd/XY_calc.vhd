@@ -117,7 +117,7 @@ begin  -- A
     port map (
       Buff_in  => Buff_in_2,
       Buff_out => A_2,
-      Buff_OE  => Sign,                 -- ?? error ??
+      Buff_OE  => '1',                 -- ?? error ??
       Clk      => Clk,
       Reset    => Reset
       );
