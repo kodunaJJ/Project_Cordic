@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 library lib_VHDL;
-use lib_VHDL.Alu;
+use lib_VHDL.Buff;
 
 entity test_Buff is
 end test_Buff;
@@ -25,7 +25,8 @@ architecture test of test_Buff is
 
   signal Sig_Buff_inS  : std_logic_vector(15 downto 0);
   signal Sig_Buff_OutS : std_logic_vector(15 downto 0);
-
+  
+  constant delay_400 : time := 400 ns;
   constant delay_10 : time := 10 ns;
   constant delay_5  : time := 5 ns;
   constant delay_2  : time := 2 ns;
