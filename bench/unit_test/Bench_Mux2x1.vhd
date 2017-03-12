@@ -10,9 +10,11 @@ end test_Mux2x1;
 
 architecture test of test_Mux2x1 is
   component Mux2x1
-    port (In1, In2 : in  std_logic_vector(15 downto 0);
+    generic (
+      N : positive);
+    port (In1, In2 : in  std_logic_vector(N-1 downto 0);
           Sel      : in  std_logic;
-          Mux_out  : out std_logic_vector (15 downto 0));
+          Mux_out  : out std_logic_vector (N-1 downto 0));
   end component;
 
   signal Sig_In1 : signed (15 downto 0);
@@ -31,6 +33,8 @@ architecture test of test_Mux2x1 is
 
 begin
   Mux : Mux2x1
+    generic map (
+      N => 16)
     port map (
       In1     => Sig_In1s,
       In2     => Sig_In2s,

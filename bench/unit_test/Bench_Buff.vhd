@@ -9,12 +9,14 @@ end test_Buff;
 
 architecture test of test_Buff is
   component Buff
+    generic (
+      N : positive);
     port (
-      Buff_in  : in  std_logic_vector(15 downto 0);
+      Buff_in  : in  std_logic_vector(N-1 downto 0);
       Buff_OE  : in  std_logic;
       Clk      : in  std_logic;
       Reset    : in  std_logic;
-      Buff_Out : out std_logic_vector(15 downto 0));
+      Buff_Out : out std_logic_vector(N-1 downto 0));
   end component;
 
   signal Sig_Buff_in  : signed (15 downto 0);
@@ -34,6 +36,8 @@ architecture test of test_Buff is
 
 begin
   Buff1 : Buff
+    generic map (
+      N => 16)
     port map(
       Buff_in  => Sig_Buff_inS,
       Buff_OE  => Sig_Buff_OE,

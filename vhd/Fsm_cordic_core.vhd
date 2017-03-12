@@ -27,6 +27,8 @@ architecture A of Fsm_cordic_core is
   type STATE is (Idle, Calculation);
 
   signal Current_State, Next_State : State;
+  signal Current_Buff_IE_Z, Next_Buff_IE_Z : std_logic;
+  signal Buff_IE_Z_int : std_logic;
   signal iteration_intern          : unsigned(iteration'range);
   signal iteration_intern_incd     : unsigned(iteration'range);
 
@@ -37,6 +39,8 @@ begin
   Shift_count_1         <= iteration;
   iteration_intern_incd <= iteration_intern + 2;
   Shift_count_2         <= std_logic_vector(iteration_intern_incd);
+  Buff_IE_Z_int <= Current_Buff_IE_Z;
+  Buff_IE_Z <= Buff_IE_Z_int;
 
   -- comment decaler de i + 2 lorsque i=14 et 15 ? parametrer shifer
   -- differement ?
@@ -45,27 +49,30 @@ begin
   begin
     if (Reset = '1') then
       Current_State <= Idle;
+      Current_Buff_IE_Z <= '0';
     elsif (Clk = '1' and Clk'event) then
       Current_State <= Next_State;
+      Current_Buff_IE_Z <= Next_Buff_IE_Z;
     end if;
   end process P_STATE;
 
-  P_FSM : process(Current_state, START_CAL, iteration_intern)
+  P_FSM : process(Current_state, START_CAL, iteration_intern,Buff_IE_Z_int)
   begin
 
-    Next_State <= Idle;
-    Data_sel <= '0';
-    End_cal <= '1';
-    Buff_IE_X_Y <= '0';
-    Buff_IE_Z <= '0';
-    Buff_OE <= '0';
+    Next_State     <= Idle;
+    Data_sel       <= '0';
+    End_cal        <= '1';
+    Buff_IE_X_Y    <= '0';
+    --Buff_IE_Z      <= '0';
+    Next_Buff_IE_Z <= '0';      -- a voir
+    Buff_OE        <= '0';
     Counter_enable <= '1';
-    Counter_reset <= '0';
+    Counter_reset  <= '0';
 
     case Current_state is
 
       when Idle =>
-        if iteration_intern = 15  then
+        if iteration_intern = 15 then
           Buff_OE <= '1';
         end if;
 
@@ -74,13 +81,14 @@ begin
         end if;
 
         Counter_enable <= '0';
-        Counter_reset <= '1';
+        Counter_reset  <= '1';
 
       when Calculation =>
         End_cal     <= '0';
         Buff_IE_X_Y <= '1';
         Next_State  <= Calculation;
-          Buff_IE_Z <= '1';
+        --Buff_IE_Z   <= Clk;
+        Next_Buff_IE_Z <= not Current_Buff_IE_Z;
 
         case iteration_intern is
           when "0000" =>
@@ -89,7 +97,7 @@ begin
             data_sel   <= '1';
             Next_State <= Idle;
           when others =>
-            Data_sel       <= '1';
+            Data_sel <= '1';
         end case;
       when others =>
         Next_State <= Idle;

@@ -11,7 +11,8 @@ end test_Alu;
 
 architecture test of test_Alu is
   component Alu
-
+    generic (
+      N : positive);
     port (
       A, B : in  std_logic_vector(15 downto 0);
       Cmd  : in  std_logic;
@@ -30,7 +31,8 @@ architecture test of test_Alu is
   constant delay_1  : time := 1 ns;
 begin
   Alu1 : Alu
-
+    generic map (
+      N => 16)
     port map (
       A   => Sig_As,
       B   => Sig_Bs,

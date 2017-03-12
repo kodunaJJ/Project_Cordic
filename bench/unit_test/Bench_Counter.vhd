@@ -9,6 +9,9 @@ end test_Counter;
 
 architecture test of test_Counter is
   component Counter
+    generic (
+      P  : positive;
+      N : natural);
     port (
       Clk          : in  std_logic;
       Reset        : in  std_logic;
@@ -31,6 +34,9 @@ architecture test of test_Counter is
 
 begin
   Count : Counter
+    generic map (
+      P => 4,
+      N => 16)
     port map (
       Clk          => Sig_Clk,
       Reset        => Sig_Reset,
@@ -42,9 +48,10 @@ begin
   process
   begin
     Sig_Count_enable <= '1';
-    wait for delay_5;
+    wait for delay_10;
     Sig_Count_enable <= '0';
-    wait for delay_5;
+    wait for delay_10;
+    Sig_Count_enable <= '1';
     wait;
   end process;
 
@@ -58,6 +65,10 @@ begin
   begin
     Sig_Reset <= '1';
     wait for delay_2;
+    Sig_Reset <= '0';
+    wait for delay_10;
+    Sig_Reset <= '1';
+    wait for delay_10;
     Sig_Reset <= '0';
     wait;
   end process;
