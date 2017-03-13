@@ -76,14 +76,14 @@ begin  -- A
     port map (
       In1     => Data_in,
       In2     => Buff_in_3,
-      Sel     => Sel,                                      ---????????
+      Sel     => Sel,
       Mux_out => Buff_in);
 
   U2 : Buff
     generic map (N => 16)
     port map (
       Buff_in  => Buff_in,
-      Buff_Out => Buff_out_1,           -- ?? need the signal A, dont u ? 
+      Buff_Out => Buff_out_1,
       Buff_OE  => In_Enable,
       Clk      => Clk,
       Reset    => Reset
@@ -117,7 +117,7 @@ begin  -- A
     port map (
       Buff_in  => Buff_in_2,
       Buff_out => A_2,
-      Buff_OE  => '1',                 -- ?? error ??
+      Buff_OE  => '1',
       Clk      => Clk,
       Reset    => Reset
       );
