@@ -58,7 +58,7 @@ begin
     Sig_Buff_in <= to_signed(15, 16);
     Sig_Buff_OE <= '1';
     wait for delay_5;
-    assert Sig_Buff_Out = 10 report "Buff test Sig_Buff_Out egal 10" severity note;
+    assert Sig_Buff_Out = 15 report "Buff test Sig_Buff_Out egal 15" severity note;
 
     Sig_Buff_in <= to_signed(-15, 16);
     Sig_Buff_OE <= '1';
@@ -70,7 +70,7 @@ begin
     wait for delay_5;
     assert Sig_Buff_Out = -15 report "Buff test Sig_Buff_Out egal -15" severity note;
     
-    wait for delay_5;
+    wait for delay_400;
     assert false report " FIN DE LA SIMULATION" severity failure;
 
   end process;
@@ -91,8 +91,6 @@ begin
     wait for delay_1;
     Sig_Clk <= '1';
     wait for delay_1;
-    Sig_Clk <= '0';
-    wait for delay_2;
   end process;
 
 end test;

@@ -24,7 +24,8 @@ architecture test of test_Alu is
   signal Sig_Cmd                : std_logic;
   signal Sig_As, Sig_Bs, Sig_Ss : std_logic_vector(15 downto 0);
 
-
+  
+  constant delay_400 : time := 400 ns;
   constant delay_10 : time := 10 ns;
   constant delay_5  : time := 5 ns;
   constant delay_2  : time := 2 ns;
@@ -77,9 +78,9 @@ begin
     Sig_B   <= to_signed(-23, 16);
     Sig_Cmd <= '1';                     -- minus
     wait for delay_5;
-    assert sig_S = 10 report "ALU test soustraction sig_out positive" severity note;
+    assert sig_S = 36 report "ALU test soustraction sig_out positive" severity note;
 
-    wait for delay_5;
+    wait for delay_400;
     assert false report " FIN DE LA SIMULATION" severity failure;
   end process;
 end test;

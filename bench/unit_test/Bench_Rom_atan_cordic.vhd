@@ -39,35 +39,35 @@ begin
   begin
     Sig_Rom_Address <= to_unsigned(0, 4);
     wait for delay_5;
-    assert Sig_Rom_out = "0011001001000011" report "premiere adresse de rom" severity note;
+    assert Sig_Rom_out = "0110010010000111" report "premiere adresse de rom" severity note;
 
     Sig_Rom_Address <= to_unsigned(1, 4);
     wait for delay_5;
-    assert Sig_Rom_out = "0001110110101100" report "deuxieme adresse de rom" severity note;
+    assert Sig_Rom_out = "0011101101011000" report "deuxieme adresse de rom" severity note;
 
     Sig_Rom_Address <= to_unsigned(2, 4);
     wait for delay_5;
-    assert Sig_Rom_out =  "0000111110101110" report "troisieme adresse de rom" severity note;
+    assert Sig_Rom_out =  "0001111101011011" report "troisieme adresse de rom" severity note;
 
     
     Sig_Rom_Address <= to_unsigned(3, 4);
     wait for delay_5;
-    assert Sig_Rom_out =  "0000111110101110" report "troisieme adresse de rom" severity note;
+    assert Sig_Rom_out =  "0000111111101010" report "quartrieme adresse de rom" severity note;
 
     
     Sig_Rom_Address <= to_unsigned(13, 4);
     wait for delay_5;
-    assert Sig_Rom_out =   "0000000000000001" report "treizieme adresse de rom" severity note;
+    assert Sig_Rom_out =   "0000000000000011" report "quartorzieme adresse de rom" severity note;
 
     
     Sig_Rom_Address <= to_unsigned(14, 4);
     wait for delay_5;
-    assert Sig_Rom_out =  "0000000000000000" report "quartorzieme adresse de rom" severity note;
+    assert Sig_Rom_out =  "0000000000000001" report "quinzieme adresse de rom" severity note;
 
     
     Sig_Rom_Address <= to_unsigned(15, 4);
     wait for delay_5;
-    assert Sig_Rom_out =  "0000000000000000" report "quinzieme adresse de rom" severity note;
+    assert Sig_Rom_out =  "0000000000000000" report "seizieme adresse de rom" severity note;
 
     wait for delay_400;
     assert false report " FIN DE LA SIMULATION" severity failure;

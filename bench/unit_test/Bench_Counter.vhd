@@ -80,8 +80,7 @@ begin
     wait for delay_1;
     Sig_Clk <= '1';
     wait for delay_1;
-    Sig_Clk <= '0';
-    wait for delay_2;
+
   end process;
 
 end test;

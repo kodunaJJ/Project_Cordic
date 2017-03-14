@@ -17,19 +17,20 @@ architecture test of test_Mux2x1 is
           Mux_out  : out std_logic_vector (N-1 downto 0));
   end component;
 
-  signal Sig_In1 : signed (15 downto 0);
-  signal Sig_In2 : signed (15 downto 0);
-  signal Sig_Sel : std_logic;
+  signal Sig_In1     : signed (15 downto 0);
+  signal Sig_In2     : signed (15 downto 0);
+  signal Sig_Sel     : std_logic;
   signal Sig_Mux_out : signed (15 downto 0);
 
   signal Sig_In1s     : std_logic_vector(15 downto 0);
   signal Sig_In2s     : std_logic_vector(15 downto 0);
   signal Sig_Mux_outs : std_logic_vector(15 downto 0);
 
- constant delay_10             : time := 10 ns;
-  constant delay_5              : time := 5 ns;
-  constant delay_2              : time := 2 ns;
-  constant delay_1              : time := 1 ns;
+  constant delay_400 : time := 400 ns;
+  constant delay_10  : time := 10 ns;
+  constant delay_5   : time := 5 ns;
+  constant delay_2   : time := 2 ns;
+  constant delay_1   : time := 1 ns;
 
 begin
   Mux : Mux2x1
@@ -57,13 +58,13 @@ begin
     Sig_In2 <= to_signed(20, 16);
     Sig_Sel <= '0';
     wait for delay_5;
-    assert Sig_Mux_out = 20 report "Sel egal 0, Mux_out vaut In2 egal 10" severity note;
+    assert Sig_Mux_out = 10 report "Sel egal 0, Mux_out vaut In1 egal 10" severity note;
 
     Sig_In1 <= to_signed(-10, 16);
     Sig_In2 <= to_signed(-20, 16);
     Sig_Sel <= '0';
     wait for delay_5;
-    assert Sig_Mux_out = 20 report "Sel egal 0 Mux_out vaut In2 egal -20" severity note;
+    assert Sig_Mux_out = -10 report "Sel egal 0 Mux_out vaut In1 egal -10" severity note;
 
     Sig_In1 <= to_signed(0, 16);
     Sig_In2 <= to_signed(20, 16);
@@ -71,7 +72,7 @@ begin
     wait for delay_5;
     assert Sig_Mux_out = 20 report "Sel egal 1, Mux_out vaut In2 egal 0" severity note;
 
-    wait for delay_5;
+    wait for delay_400;
     assert false report " FIN DE LA SIMULATION" severity failure;
   end process;
 end test;
