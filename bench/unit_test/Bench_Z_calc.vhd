@@ -40,31 +40,17 @@ architecture test of test_Z_calc is
   signal Sig_Angle       : std_logic_vector(15 downto 0);
   signal Sig_sel         : std_logic;
   signal Sig_Sign        : std_logic;
-  signal Sig_In_Enable   : std_logic;
-  signal Sig_Clk         : std_logic                    := '0';
+  signal Sig_In_Enable   : std_logic := '0';
+  signal Sig_Clk         : std_logic                    := '1';
   signal Sig_Reset       : std_logic;
   signal Sig_Msb         : std_logic;
   signal Sig_rom_address : std_logic_vector(3 downto 0);
   signal Sig_rom_out     : std_logic_vector(15 downto 0);
   signal Sig_iteration   : std_logic_vector(3 downto 0) := "0001";
 
-  constant Clk_period       : time := 10 ns;
+  constant Clk_period       : time := 5 ns;
   constant iteration_period : time := 2*Clk_period;
   constant simu_period      : time := 30*Clk_period;
---type tab_rom is array (0 to 15) of std_logic_vector(15 downto 0);
---    constant atan_rom : tab_rom :=
---    (0 => "0110010010000111", 1 => "0011101101011000" , 2 => "0001111101011011",
---     -- 45                                      --      14.036
---    3 => "0000111111101010" , 4 => "0000011111111101" , 5 => "0000001111111111",
---     --
---     6        => "0000000111111111" , 7 => "0000000111111111" ,  8 => "0000000001111111" ,
-
---    9 => "0000000000111111" , 10 => "0000000000011111" , 11 => "0000000000001111",
---     --
---     12 => "0000000000000111", 13 =>  "0000000000000011", 14 =>  "0000000000000001",
---     --
---     15 => "0000000000000000");
-
 
 begin  -- architecture test
 
@@ -91,7 +77,8 @@ begin  -- architecture test
       );
 
   Sig_Clk         <= not Sig_Clk                                   after Clk_period;
-  Sig_iteration   <= std_logic_vector(unsigned(Sig_iteration) + 1) after iteration_period;
+  Sig_iteration   <= std_logic_vector(unsigned(Sig_iteration) + 1) after 2*iteration_period;
+  Sig_In_Enable <= not Sig_In_Enable after 2*Clk_period;
   Sig_rom_address <= Sig_iteration;
   Sig_Sign        <= not Sig_Msb;
 
@@ -107,27 +94,27 @@ begin  -- architecture test
 
     -- waveform generation start on unsigned op
     Sig_Reset     <= '1';
-    Sig_Z0        <= "0010001011000011";  -- insert angle to calculate
+    Sig_Z0        <= "0010001011000011";  -- insert angle to calculate (15.56 deg)
     Sig_sel       <= '0';
-    Sig_In_Enable <= '0';
+    --Sig_In_Enable <= '0';
     --Sig_iteration <= "0001";
     wait for 3*Clk_period;
     assert false report "End reset period" severity note;
 
     Sig_Reset     <= '0';
     Sig_sel       <= '0';
-    Sig_In_Enable <= '1';
+    --Sig_In_Enable <= '1';
 
-    wait for Clk_period;
+    wait for 4*Clk_period;
     assert false report "Calculation start" severity note;
 
     while unsigned(Sig_iteration) < 16 loop
       Sig_sel       <= '1';
-      Sig_In_Enable <= '1';
+      --Sig_In_Enable <= '1';
 
       wait for Clk_period;
 
-      Sig_In_Enable <= '0';
+      --Sig_In_Enable <= '0';
       wait for Clk_period;
 
     end loop;
