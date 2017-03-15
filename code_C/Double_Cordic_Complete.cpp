@@ -15,8 +15,14 @@ int main() {
 	int sign = 1, i= 0;
 	int temp;
 	printf("\n Input angle [0;pi/4] : ");
+	
+	
+	
 	scanf("%lf", &angle_input[0]);
 		printf("\n Angle: %f \n",fabs(angle_input[0]) );
+		printf("\n Input angle [0;pi/4] in binary: ");
+		double binary = double_to_binary(angle_input[0]);
+		printf("\n");
 	printf("Loop |   X[i] binary      |     Y[i]  binary   | Erreur angle binary|   X[i]   |   Y[i]    |Erreur angle|\n");
 	printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");		
 	while ( i < 16){
