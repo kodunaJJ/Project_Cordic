@@ -48,6 +48,7 @@ architecture test of test_Z_calc is
   signal Sig_rom_out     : std_logic_vector(15 downto 0);
   signal Sig_iteration   : std_logic_vector(3 downto 0) := "1111";
 
+
   constant Clk_period       : time := 2 ns;
   constant iteration_period : time := 2*Clk_period;
   constant simu_period      : time := 60*Clk_period;
@@ -110,7 +111,7 @@ begin  -- architecture test
 
     -- waveform generation start on unsigned op
     Sig_Reset     <= '1';
-    Sig_Z0        <= "0010001011000011";  -- insert angle to calculate (15.56 deg)
+    Sig_Z0        <= "0000000000000000";  -- insert angle to calculate (15.56 deg)
     Sig_sel       <= '0';
     --Sig_In_Enable <= '0';
     --Sig_iteration <= "0001";
