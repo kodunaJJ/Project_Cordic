@@ -63,7 +63,7 @@ double double_to_binary(double f){
         integral = integral / 2;
     }
 
-    while(k> pow(10, -14))
+    while(k> pow(10, -15))
     {
         temp1 = fractional *2;
         binaryFract = binaryFract+((int)temp1)*k;
@@ -73,8 +73,8 @@ double double_to_binary(double f){
 
     binaryTotal = binaryInt +binaryFract;
     if (sign == 0){
-    	printf("0%5.14f   |", binaryTotal);
+    	printf("0%5.15f   |", binaryTotal);
 	}else {
-		printf("1%5.14f   |", binaryTotal);
+		printf("1%5.15f   |", binaryTotal);
 	}
 }
