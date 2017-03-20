@@ -16,7 +16,8 @@ architecture A of X_calc_test is
 
   component XY_calc is
     generic (
-      N : positive);
+      N : positive;
+      P : positive);
     port (
       Clk           : in  std_logic;
       Reset         : in  std_logic;
@@ -27,8 +28,8 @@ architecture A of X_calc_test is
       Out_Enable    : in  std_logic;
       Data_in_i     : in  std_logic_vector(N-1 downto 0);
       Data_out_i    : out std_logic_vector (N-1 downto 0);
-      Shift_count_1 : in  std_logic_vector (3 downto 0);
-      Shift_count_2 : in  std_logic_vector (3 downto 0);
+      Shift_count_1 : in  std_logic_vector (P-1 downto 0);
+      Shift_count_2 : in  std_logic_vector (P-1 downto 0);
       Data_n        : out std_logic_vector (N-1 downto 0)
       );
   end component XY_calc;
@@ -66,20 +67,19 @@ architecture A of X_calc_test is
   signal Sig_Msb         : std_logic;
   signal Sig_rom_address : std_logic_vector(3 downto 0);
   signal Sig_rom_out     : std_logic_vector(15 downto 0);
-  signal Sig_iteration   : std_logic_vector(3 downto 0) := "1111";
+  signal Sig_iteration   : std_logic_vector(3 downto 0) := "1110";
 
 -- necessary signal for X_calc block
 
   signal Sig_X0            : std_logic_vector(15 downto 0);
   signal Sig_sel_X         : std_logic;
-  signal Sig_In_Enable_X   : std_logic;
+  signal Sig_In_Enable_X   : std_logic := '0';
   signal Sig_Out_Enable_X  : std_logic;
   signal Sig_Data_in_i_X   : std_logic_vector(15 downto 0);
   signal Sig_Data_out_i_X  : std_logic_vector(15 downto 0);
-  signal Sig_Shift_count_1 : std_logic_vector(3 downto 0);
-  signal Sig_Shift_count_2 : std_logic_vector(3 downto 0);
+  signal Sig_Shift_count_1 : std_logic_vector(4 downto 0);
+  signal Sig_Shift_count_2 : std_logic_vector(4 downto 0);
   signal Sig_Data_n        : std_logic_vector(15 downto 0);
-  signal Sig_iteration_X   : std_logic_vector(3 downto 0);
 
   -- necessary signal for Y_calc block
 
@@ -91,14 +91,15 @@ architecture A of X_calc_test is
 
   constant Clk_period       : time := 2 ns;
   constant iteration_period : time := 2*Clk_period;
-  constant simu_period      : time := 60*Clk_period;
+  constant simu_period      : time := 70*Clk_period;
 
 begin  -- architecture A
 
   X_calc_test : XY_calc
 
     generic map (
-      N => 16)
+      N => 16,
+      P => 5)
     port map (
       Clk           => Sig_Clk,
       Reset         => Sig_Reset,
@@ -115,7 +116,8 @@ begin  -- architecture A
 
   Y_calc_test : XY_calc
     generic map (
-      N => 16)
+      N => 16,
+      P => 5)
     port map (
       Clk           => Sig_Clk,
       Reset         => Sig_Reset,
@@ -154,9 +156,8 @@ begin  -- architecture A
   Sig_Sign          <= not Sig_Msb;
   Sig_Sign_Y <= Sig_Msb;
   Sig_iteration     <= std_logic_vector(unsigned(Sig_iteration) + 1) after 2*iteration_period;
-  Sig_iteration_X   <= Sig_iteration;
-  Sig_Shift_count_1 <= std_logic_vector(unsigned(Sig_iteration_X)-1);
-  Sig_Shift_count_2 <= std_logic_vector(unsigned(Sig_iteration_X)+1);
+  Sig_Shift_count_1 <= std_logic_vector(('0'& unsigned(Sig_iteration))+1);
+  Sig_Shift_count_2 <= std_logic_vector(('0'& unsigned(Sig_iteration))+3);
 
   Sig_rom_address <= Sig_iteration;
   Sig_Sign        <= not Sig_Msb;
@@ -186,9 +187,11 @@ begin  -- architecture A
 
     -- waveform generation start on unsigned op
     Sig_Reset       <= '1';
-    --Sig_Z0        <= "0000000000000000";  -- (15.56 deg)
+    --Sig_Z0        <= "0000000000000001";  -- (0 deg)
     --Sig_Z0    <= "0100001100000100";    -- pi/6
-    Sig_Z0          <= "1101111001111110";  -- -pi/12
+    --Sig_Z0          <= "1101111001111110";  -- -pi/12
+    --Sig_Z0 <= "0110010010000110";       -- pi/4
+    Sig_Z0 <= "1101101111111010";        -- (-16 deg)
     Sig_X0          <= "0111011000000000";
     Sig_Y0 <= (others => '0');
     Sig_sel         <= '0';
@@ -198,17 +201,15 @@ begin  -- architecture A
     --Sig_iteration <= "0001";
     wait for 5*Clk_period;
     assert false report "End reset period" severity note;
-    Sig_Reset       <= '0';
-    Sig_In_Enable_X <= '0';
-    wait for 2*Clk_period;
-    Sig_sel_X       <= '0';
-    wait for 3*Clk_period;
-    Sig_In_Enable_X <= '1';
-    wait for 2*Clk_period;
-    Sig_sel_X       <= '1';
-    wait for 2*Clk_period;
-    Sig_sel         <= '1';
 
+    Sig_Reset       <= '0';
+    wait for Clk_period;
+    Sig_In_Enable_X <= '1';
+    wait for 4*Clk_period;
+    Sig_sel         <= '1';
+    Sig_sel_X <= '1';
+    wait for 62*Clk_period;
+    Sig_Out_Enable_X <= '1';
     wait for simu_period;
     assert false report "end OF SIMULATION" severity failure;
 

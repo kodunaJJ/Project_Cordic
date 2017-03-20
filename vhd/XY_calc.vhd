@@ -4,7 +4,8 @@ use ieee.numeric_std.all;
 
 entity XY_calc is
   generic (
-    N : positive);
+    N : positive;
+    P : positive);
   port (
     Clk           : in  std_logic;
     Reset         : in  std_logic;
@@ -15,8 +16,8 @@ entity XY_calc is
     Out_Enable    : in  std_logic;
     Data_in_i     : in  std_logic_vector(N-1 downto 0);
     Data_out_i    : out std_logic_vector (N-1 downto 0);
-    Shift_count_1 : in  std_logic_vector (3 downto 0);
-    Shift_count_2 : in  std_logic_vector (3 downto 0);
+    Shift_count_1 : in  std_logic_vector (P-1 downto 0);
+    Shift_count_2 : in  std_logic_vector (P-1 downto 0);
     Data_n        : out std_logic_vector (N-1 downto 0)
     );
 end entity XY_calc;
@@ -54,11 +55,12 @@ architecture A of XY_calc is
 
   component Barrel_shifter
     generic (
-      N : positive);
+      N : positive;
+      P : positive);
     port(
       Shifter_in  : in  std_logic_vector (N-1 downto 0);
       Shifter_out : out std_logic_vector(N-1 downto 0);
-      Shift_count : in  std_logic_vector(3 downto 0)
+      Shift_count : in  std_logic_vector(P-1 downto 0)
       );
   end component;
 
@@ -90,14 +92,16 @@ begin  -- A
       );
 
   U3 : Barrel_shifter                   -- Shifter i in the shematic
-    generic map (N => 16)
+    generic map (N => 16,
+                 P => 5)
     port map (
       Shifter_in  => Buff_out_1,
       Shifter_out => Shifter_out_1,
       Shift_count => Shift_count_1);
 
   U4 : Barrel_shifter                   -- Shifter "i+2" in the shematic
-    generic map (N => 16)
+    generic map (N => 16,
+                 P => 5)
     port map (
       Shifter_in  => Shifter_out_1,
       Shifter_out => Shifter_out_2,
