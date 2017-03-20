@@ -46,7 +46,7 @@ architecture test of test_Z_calc is
   signal Sig_Msb         : std_logic;
   signal Sig_rom_address : std_logic_vector(3 downto 0);
   signal Sig_rom_out     : std_logic_vector(15 downto 0);
-  signal Sig_iteration   : std_logic_vector(3 downto 0) := "1111";
+  signal Sig_iteration   : std_logic_vector(3 downto 0) := "1110";
 
 
   constant Clk_period       : time := 2 ns;
@@ -110,16 +110,16 @@ begin  -- architecture test
 
     -- waveform generation start on unsigned op
     Sig_Reset <= '1';
-    --Sig_Z0        <= "0000000000000000";  -- (15.56 deg)
+    Sig_Z0        <= "0000000000000000";  -- (0)
     --Sig_Z0    <= "0100001100000100";    -- pi/6
-    Sig_Z0 <= "1101111001111110";         -- -pi/12
+    --Sig_Z0 <= "1101111001111110";         -- -pi/12
     Sig_sel   <= '0';
     --Sig_In_Enable <= '0';
     --Sig_iteration <= "0001";
     wait for 5*Clk_period;
     assert false report "End reset period" severity note;
     Sig_Reset <= '0';
-    wait for 9*Clk_period;
+    wait for 5*Clk_period;
     Sig_sel   <= '1';
 
 
