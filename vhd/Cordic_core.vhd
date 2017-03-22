@@ -32,7 +32,8 @@ architecture A of Cordic_core is
 
   component XY_calc is
     generic (
-      N : positive);
+      N : positive;
+      P: positive);
     port (
       Clk           : in  std_logic;
       Reset         : in  std_logic;
@@ -43,13 +44,16 @@ architecture A of Cordic_core is
       Out_Enable    : in  std_logic;
       Data_in_i     : in  std_logic_vector(N-1 downto 0);
       Data_out_i    : out std_logic_vector (N-1 downto 0);
-      Shift_count_1 : in  std_logic_vector (3 downto 0);
-      Shift_count_2 : in  std_logic_vector (3 downto 0);
+      Shift_count_1 : in  std_logic_vector (P-1 downto 0);
+      Shift_count_2 : in  std_logic_vector (P-1 downto 0);
       Data_n        : out std_logic_vector (N-1 downto 0)
       );
   end component XY_calc;
 
   component Fsm_cordic_core
+    generic (
+      N :positive
+      );
     port(
       Clk            : in  std_logic;
       Reset          : in  std_logic;
@@ -62,9 +66,9 @@ architecture A of Cordic_core is
       Buff_IE_Z      : out std_logic;
       Data_sel       : out std_logic;
       Rom_Address    : out std_logic_vector(3 downto 0);
-      Shift_count_1  : out std_logic_vector(3 downto 0);  -- really
+      Shift_count_1  : out std_logic_vector(N-1 downto 0);  -- really
                                                           -- needed ??
-      Shift_count_2  : out std_logic_vector(3 downto 0);
+      Shift_count_2  : out std_logic_vector(N-1 downto 0);
       Buff_OE        : out std_logic);
   end component;
 
@@ -106,8 +110,8 @@ architecture A of Cordic_core is
                                                                --N !!!
 
   signal Iter_count    : std_logic_vector(3 downto 0);
-  signal Shift_count_1 : std_logic_vector(3 downto 0);
-  signal Shift_count_2 : std_logic_vector(3 downto 0);
+  signal Shift_count_1 : std_logic_vector(4 downto 0);
+  signal Shift_count_2 : std_logic_vector(4 downto 0);
   signal Sign_intern   : std_logic;
   signal Y_shifted     : std_logic_vector(N-1 downto 0);
   signal X_shifted     : std_logic_vector(N-1 downto 0);
@@ -143,7 +147,8 @@ begin
 
   U3 : XY_calc
     generic map (
-      N => 16)
+      N => 16,
+      P => 5)
     port map (                          -- X calculation
 
       Clk           => Clk,
@@ -155,14 +160,15 @@ begin
       Out_Enable    => Buff_OE_intern,
       Data_in_i     => Y_shifted,
       Data_out_i    => X_shifted,
-      Shift_count_1 => Iter_count,
+      Shift_count_1 => Shift_count_1,
       Shift_count_2 => Shift_count_2,
       Data_n        => X_out
       );
 
   U4 : XY_calc
     generic map (
-      N => 16)
+      N => 16,
+      P => 5)
     port map (                          -- Y calculation
 
       Clk           => Clk,
@@ -179,7 +185,10 @@ begin
       Data_n        => Y_out
       );
 
-  U6 : Fsm_cordic_core port map (
+  U6 : Fsm_cordic_core
+    generic map (
+      N => 5)
+    port map (
     Clk            => Clk,
     Reset          => Reset,
     Start_cal      => Start_cal,
@@ -191,8 +200,7 @@ begin
     Buff_IE_Z      => Buff_IE_Z_intern,
     Data_sel       => Data_sel_intern,
     Rom_Address    => Rom_Address_intern,
-    Shift_count_1  => Shift_count_1,    -- really
-    -- needed ??
+    Shift_count_1  => Shift_count_1,    
     Shift_count_2  => Shift_count_2,
     Buff_OE        => Buff_OE_intern
     );

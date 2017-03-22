@@ -5,6 +5,9 @@ use IEEE.numeric_std.all;
 
 
 entity Fsm_cordic_core is
+  generic (
+    N : positive
+    );
   port(Clk            : in  std_logic;
        Reset          : in  std_logic;
        Start_cal      : in  std_logic;
@@ -16,8 +19,8 @@ entity Fsm_cordic_core is
        Buff_IE_Z      : out std_logic;
        Data_sel       : out std_logic;
        Rom_Address    : out std_logic_vector(3 downto 0);
-       Shift_count_1  : out std_logic_vector(3 downto 0);
-       Shift_count_2  : out std_logic_vector(3 downto 0);
+       Shift_count_1  : out std_logic_vector(N-1 downto 0);
+       Shift_count_2  : out std_logic_vector(N-1 downto 0);
        Buff_OE        : out std_logic);
 end Fsm_cordic_core;
 
@@ -35,10 +38,9 @@ architecture A of Fsm_cordic_core is
 begin
 
   Rom_Address           <= std_logic_vector(iteration);
-  iteration_intern      <= unsigned(iteration);  -- a changer avec schema donner par le prof
-  Shift_count_1         <= iteration;
-  iteration_intern_incd <= iteration_intern + 2;
-  Shift_count_2         <= std_logic_vector(iteration_intern_incd);
+  iteration_intern      <= unsigned(iteration);  
+  Shift_count_1         <= std_logic_vector(('0'& unsigned(iteration))+1);
+  Shift_count_2         <= std_logic_vector(('0'& unsigned(iteration))+3);
   Buff_IE_Z_int <= Current_Buff_IE_Z;
   Buff_IE_Z <= Buff_IE_Z_int;
 
