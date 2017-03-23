@@ -126,7 +126,7 @@ begin  -- A
       Reset    => Reset
       );
 
-  U7 : ALU                              -- ALU 2 
+  U7 : Alu                              -- ALU 2 
     generic map (N => 16)
     port map (
       A   => A_2,
