@@ -137,7 +137,7 @@ begin  -- A
   U8 : Buff                             --  Output Buffer
     generic map (N => 16)
     port map (
-      Buff_in  => A_2,
+      Buff_in  => Buff_in_3,
       Buff_out => Data_n,
       Buff_OE  => Out_Enable,
       Clk      => Clk,

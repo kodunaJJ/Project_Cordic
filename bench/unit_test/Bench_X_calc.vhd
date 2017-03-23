@@ -83,11 +83,11 @@ architecture A of X_calc_test is
 
   -- necessary signal for Y_calc block
 
-  signal Sig_Y0 : std_logic_vector(15 downto 0);
-  signal Sig_Data_in_i_Y : std_logic_vector(15 downto 0);
+  signal Sig_Y0           : std_logic_vector(15 downto 0);
+  signal Sig_Data_in_i_Y  : std_logic_vector(15 downto 0);
   signal Sig_Data_out_i_Y : std_logic_vector(15 downto 0);
-  signal Sig_Data_n_Y : std_logic_vector(15 downto 0);
-  signal Sig_Sign_Y : std_logic;
+  signal Sig_Data_n_Y     : std_logic_vector(15 downto 0);
+  signal Sig_Sign_Y       : std_logic;
 
   constant Clk_period       : time := 2 ns;
   constant iteration_period : time := 2*Clk_period;
@@ -131,7 +131,7 @@ begin  -- architecture A
       Shift_count_1 => Sig_Shift_count_1,
       Shift_count_2 => Sig_Shift_count_2,
       Data_n        => Sig_Data_n_Y);
-  
+
   Z_calc_test : Z_calc
     generic map (
       N => 16)
@@ -154,7 +154,7 @@ begin  -- architecture A
 
   Sig_Clk           <= not Sig_Clk                                   after Clk_period;
   Sig_Sign          <= not Sig_Msb;
-  Sig_Sign_Y <= Sig_Msb;
+  Sig_Sign_Y        <= Sig_Msb;
   Sig_iteration     <= std_logic_vector(unsigned(Sig_iteration) + 1) after 2*iteration_period;
   Sig_Shift_count_1 <= std_logic_vector(('0'& unsigned(Sig_iteration))+1);
   Sig_Shift_count_2 <= std_logic_vector(('0'& unsigned(Sig_iteration))+3);
@@ -166,9 +166,11 @@ begin  -- architecture A
   begin
     if (Sig_Clk = '1' and Sig_Clk'event) then
       if Sig_Reset = '1' then
-        Sig_In_Enable <= '0';
+        Sig_In_Enable   <= '0';
+        Sig_In_Enable_X <= '0';
       end if;
-      Sig_In_Enable <= not Sig_In_Enable;
+      Sig_In_Enable   <= not Sig_In_Enable;
+      Sig_In_Enable_X <= not Sig_In_Enable_X;
 
     end if;
   end process process_count;
@@ -186,29 +188,33 @@ begin  -- architecture A
   begin
 
     -- waveform generation start on unsigned op
-    Sig_Reset       <= '1';
-    --Sig_Z0        <= "0000000000000001";  -- (0 deg)
-    --Sig_Z0    <= "0100001100000100";    -- pi/6
-    --Sig_Z0          <= "1101111001111110";  -- -pi/12
-    --Sig_Z0 <= "0110010010000110";       -- pi/4
-    Sig_Z0 <= "1101101111111010";        -- (-16 deg)
-    Sig_X0          <= "0111011000000000";
-    Sig_Y0 <= (others => '0');
-    Sig_sel         <= '0';
-    Sig_sel_X       <= '0';
-    Sig_In_Enable_X <= '0';
+    Sig_Reset <= '1';
+    --Sig_Z0        <= "0000000000000000";  -- (0 deg)
+    Sig_Z0    <= "0000001000111010";
+--Sig_Z0    <= "0100001100000100";    -- pi/6
+--Sig_Z0          <= "1101111001111110";  -- -pi/12
+  --Sig_Z0 <= "0110010010000110";       -- pi/4
+--Sig_Z0          <= "1101101111111010";  -- (-16 deg)
+    Sig_X0    <= "0111011000000000";
+    Sig_Y0    <= (others => '0');
+    Sig_sel   <= '0';
+    Sig_sel_X <= '0';
+    --Sig_In_Enable_X <= '0';
     --Sig_In_Enable <= '0';
     --Sig_iteration <= "0001";
     wait for 5*Clk_period;
     assert false report "End reset period" severity note;
 
-    Sig_Reset       <= '0';
+    Sig_Reset <= '0';
     wait for Clk_period;
-    Sig_In_Enable_X <= '1';
+
+    --Sig_In_Enable_X  <= '1';
     wait for 4*Clk_period;
-    Sig_sel         <= '1';
+
+    Sig_sel   <= '1';
     Sig_sel_X <= '1';
-    wait for 62*Clk_period;
+    wait for 60*Clk_period;
+
     Sig_Out_Enable_X <= '1';
     wait for simu_period;
     assert false report "end OF SIMULATION" severity failure;
