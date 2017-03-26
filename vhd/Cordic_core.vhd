@@ -175,7 +175,7 @@ begin
       Reset         => Reset,
       Data_in       => Y,
       Sel           => Data_sel_intern,
-      Sign          => Sign_b,
+      Sign          => Sign_intern,
       In_Enable     => Buff_IE_X_Y_intern,
       Out_Enable    => Buff_OE_intern,
       Data_in_i     => X_shifted,
@@ -205,17 +205,17 @@ begin
     Buff_OE        => Buff_OE_intern
     );
 
-  U7 : Clock_divider port map (
-    Clk     => Clk,
-    Reset   => Reset,
-    Clk_out => Clk_counter
-    );
+  --U7 : Clock_divider port map (
+  --  Clk     => Clk,
+  --  Reset   => Reset,
+  --  Clk_out => Clk_counter
+  --  );
 
   U8 : Counter
     generic map (
       P => 4, N => 16)
     port map (
-      Clk          => Clk_counter,
+      Clk          => Clk,
       Reset        => Count_reset,
       Count_enable => Count_enable,
       Count_out    => Iter_count

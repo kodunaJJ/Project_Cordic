@@ -31,7 +31,7 @@ architecture A of Cordic_core_test is
   constant Clk_period    : time := 2 ns;
   constant Simu_duration : time := 100*Clk_period;
 
-  signal Sig_Clk       : std_logic := '0';
+  signal Sig_Clk       : std_logic := '1';
   signal Sig_Reset     : std_logic;
   signal Sig_Start_cal : std_logic;
   signal Sig_X_in      : std_logic_vector(N-1 downto 0);
@@ -65,7 +65,7 @@ begin  -- architecture A
 
     Sig_Reset     <= '1';
     Sig_Start_cal <= '0';
-    Sig_X_in      <= "0000000000000001";                -- 0.9219 value
+    Sig_X_in      <= "0011101100000000";                -- 0.9219 value
     Sig_Y_in      <= (others => '0');
     Sig_Z_in      <= "0000000000000000";                -- angle value
     wait for 3*Clk_period;
@@ -78,6 +78,11 @@ begin  -- architecture A
 
     Sig_Start_cal <= '0';
     wait for Simu_duration;
+    Sig_Start_cal <= '1';
+    Sig_Z_in      <= "0110010010000110";
+    wait for 2*Clk_period;
+    Sig_Start_cal <= '0';
+    wait for Simu_duration; 
 
     assert false report "END OF SIMULATION" severity failure;
   end process;
