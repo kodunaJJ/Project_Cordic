@@ -88,12 +88,12 @@ architecture A of Cordic_core is
       Count_out    : out std_logic_vector(P-1 downto 0));
   end component Counter;
 
-  component Clock_divider is
-    port (
-      Reset   : in  std_logic;
-      Clk     : in  std_logic;
-      Clk_out : out std_logic);
-  end component Clock_divider;
+  --component Clock_divider is
+  --  port (
+  --    Reset   : in  std_logic;
+  --    Clk     : in  std_logic;
+  --    Clk_out : out std_logic);
+  --end component Clock_divider;
 
 
   --signal X_intern, Y_intern, Z_intern : std_logic_vector (15 downto 0);
@@ -115,7 +115,7 @@ architecture A of Cordic_core is
   signal Sign_intern   : std_logic;
   signal Y_shifted     : std_logic_vector(N-1 downto 0);
   signal X_shifted     : std_logic_vector(N-1 downto 0);
-  signal Clk_counter   : std_logic;
+  --signal Clk_counter   : std_logic;
   signal Count_enable  : std_logic;
   signal Count_reset   : std_logic;
   signal Sign_b        : std_logic;
