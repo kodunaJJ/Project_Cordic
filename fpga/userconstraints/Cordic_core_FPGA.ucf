@@ -1,0 +1,46 @@
+#
+# -----------------------
+# Assign a signal to a range of I/O pins
+# -----------------------
+#NET "signal_name" LOC=P32, P33, P34;
+#Cordic_core_FPGA Z_in
+NET Z(15) LOC=B5;
+NET Z(14) LOC=B4;
+NET Z(13) LOC=D10;
+NET Z(12) LOC=D8;
+NET Z(11) LOC=D7;
+NET Z(10) LOC=E7;
+NET Z(9) LOC=D6;
+NET Z(8) LOC=D5;
+NET Z(7) LOC=A5;
+NET Z(6) LOC=A4;
+NET Z(5) LOC=A3;
+NET Z(4) LOC=C9;
+NET Z(3) LOC=C8;
+NET Z(2) LOC=C7;
+NET Z(1) LOC=C6;
+NET Z(0) LOC=C5;
+#clk reset
+NET clk LOC = T9;
+NET reset LOC = L14;
+#Cordic_core_FPGA Start/End_cal
+NET Start_cal LOC=E6;
+NET End_cal LOC=B6;
+#Cordic_core_FPGA X_out
+NET X_out(15) LOC=B11;
+NET X_out(14) LOC=B10;
+NET X_out(13) LOC=A8;
+NET X_out(12) LOC=A7;
+NET X_out(11) LOC=A10;
+NET X_out(10) LOC=A9;
+NET X_out(9) LOC=B8;
+NET X_out(8) LOC=B7;
+NET X_out(7) LOC=G16;
+NET X_out(6) LOC=F15;
+NET X_out(5) LOC=E15;
+NET X_out(4) LOC=D15;
+NET X_out(3) LOC=G15;
+NET X_out(2) LOC=E16;
+NET X_out(1) LOC=D16;
+NET X_out(0) LOC=C16;
+# #
