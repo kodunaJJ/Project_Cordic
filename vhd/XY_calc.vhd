@@ -64,7 +64,7 @@ architecture A of XY_calc is
       );
   end component;
 
-  signal Alu_out_2     : std_logic_vector(N-1 downto 0);
+  --signal Alu_out_2     : std_logic_vector(N-1 downto 0);
   signal Buff_in       : std_logic_vector(N-1 downto 0);   --maker 0
   signal Buff_in_2     : std_logic_vector(N-1 downto 0);   -- maker "3" pink
   signal Buff_out_1    : std_logic_vector(N-1 downto 0);   -- maker "1" pink

@@ -105,7 +105,7 @@ architecture A of Cordic_core is
   signal Buff_OE_intern     : std_logic;
   signal Rom_Address_intern : std_logic_vector(3 downto 0);
   signal Rom_out_intern     : std_logic_vector(15 downto 0);
-  signal Buff_z_intern_out  : std_logic_vector(N-1 downto 0);  --
+  --signal Buff_z_intern_out  : std_logic_vector(N-1 downto 0);  --
                                                                --preciser
                                                                --N !!!
 
