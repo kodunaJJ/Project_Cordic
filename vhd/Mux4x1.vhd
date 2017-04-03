@@ -20,14 +20,10 @@ architecture A of Mux4x1 is
 
 begin  -- architecture A
 
-  case Sel is
-    when "00" =>
-      Mux_out <= In1;
-    when "01" =>
-      Mux_out <= In2;
-    when "10" =>
-      Mux_out <= In3;
-    when "11" =>
-      Mux_out <= In4;
+  Mux_out <= In1 when Sel = "00" else
+             In2 when Sel = "01" else
+             In3 when Sel = "10" else
+             In4 when Sel = "11" else
+             In1;
 
-  end architecture A;
+end architecture A;

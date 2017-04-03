@@ -6,25 +6,29 @@ use ieee.numeric_std.all;
 entity Angle_conv is
   generic (
     N : positive);
-  port (Clk        : in  std_logic;
-        Reset      : in  std_logic;
-        Z_in       : in  std_logic_vector(N-1 downto 0);
-        XY_out_cmd : out std_logic_vector(3 downto 0);
-        Z0_out     : out std_logic_vector(N-4 downto 0)
+  port (Clk            : in  std_logic;
+        Reset          : in  std_logic;
+        Z_in           : in  std_logic_vector(N-1 downto 0);
+        Buff_OE_Cad_in : in  std_logic;
+        Buff_OE_Z0     : in  std_logic;
+        Shift_enable   : in  std_logic;
+        Comp_val_sel   : in  std_logic_vector(1 downto 0);
+        XY_out_cmd     : out std_logic_vector(3 downto 0);
+        Z0_out         : out std_logic_vector(N-4 downto 0)
         );
 end Angle_conv;
 
 architecture A of Angle_conv is
 
-  --component Buff
-  --  generic (
-  --    N : positive);
-  --  port(Buff_in  : in  std_logic_vector(N-1 downto 0);
-  --       Buff_OE  : in  std_logic;
-  --       Clk      : in  std_logic;
-  --       Reset    : in  std_logic;
-  --       Buff_Out : out std_logic_vector(N-1 downto 0));
-  --end component;
+  component Buff
+    generic (
+      N : positive);
+    port(Buff_in  : in  std_logic_vector(N-1 downto 0);
+         Buff_OE  : in  std_logic;
+         Clk      : in  std_logic;
+         Reset    : in  std_logic;
+         Buff_Out : out std_logic_vector(N-1 downto 0));
+  end component;
 
   component Mux2x1
     generic (
@@ -34,13 +38,13 @@ architecture A of Angle_conv is
           Mux_out  : out std_logic_vector (N-1 downto 0));
   end component;
 
-  component Dmux1x2
-    generic (
-      N : positive);
-    port (in         : in  std_logic_vector(N-1 downto 0);
-          Sel        : in  std_logic;
-          Out1, Out2 : out std_logic_vector (N-1 downto 0));
-  end component;
+  --component Dmux1x2
+  --  generic (
+  --    N : positive);
+  --  port (in         : in  std_logic_vector(N-1 downto 0);
+  --        Sel        : in  std_logic;
+  --        Out1, Out2 : out std_logic_vector (N-1 downto 0));
+  --end component;
 
   component Alu
     generic (
@@ -51,14 +55,15 @@ architecture A of Angle_conv is
       S    : out std_logic_vector(N-1 downto 0));
   end component;
 
-  component Quadran_finder
+  component Cadran_finder
     generic (
       N : positive);
     port (Clk          : in  std_logic;
           Reset        : in  std_logic;
-          Z_in         : in  std_logic_vector(N-1 downto 0);
-          Comp_val_sel : in  std_logic;
-          Data_sel     : in  std_logic;
+          Z_in_mod     : in  std_logic_vector(N-1 downto 0);
+          Comp_val_sel : in  std_logic_vector(1 downto 0);
+          Shift_enable : in  std_logic;
+          Data_sel     : out std_logic_vector(3 downto 0);
           XY_out_cmd   : out std_logic_vector (3 downto 0));
   end component;
 
@@ -67,46 +72,74 @@ architecture A of Angle_conv is
       N : positive);
     port (Clk      : in  std_logic;
           Reset    : in  std_logic;
-          Z_in     : in  std_logic_vector(N-1 downto 0);
+          Z_in_mod : in  std_logic_vector(N-1 downto 0);
           Data_sel : in  std_logic_vector(3 downto 0);
-          Z0_out   : out std_logic_vector (N-4 downto 0));
+          Buff_OE  : in  std_logic;
+          Z_conv   : out std_logic_vector (N-4 downto 0));
   end component;
 
   --N : positive := 16;
   signal Mux_out  : std_logic_vector(N-1 downto 0);
   signal Buff_out : std_logic_vector(N-1 downto 0);
   signal Alu_out  : std_logic_vector(N-1 downto 0);
+  signal Sig_data_sel : std_logic_vector(3 downto 0);
 
 begin  -- A
 
-  Demux : Dmux1x2
-  
+  --Demux : Dmux1x2
+
   Mux : Mux2x1
     generic map (
-      N => 16)
+      N => 19)
     port map (
-      In1     => Z0,
+      In1     => Z_in,
       In2     => Alu_out,
-      Sel     => Sel,
+      Sel     => Z_in(N-1),
       Mux_out => Mux_out
       );
 
-  U2 : Buff
+  Cad_in_buff : Buff
     generic map (
-      N => 16)
+      N => 19)
     port map (
       Buff_in  => Mux_out,
       Buff_Out => Buff_Out,
-      Buff_OE  => In_Enable,
+      Buff_OE  => Buff_OE_Cad_in,
       Clk      => Clk,
       Reset    => Reset);
 
-  U3 : Alu
+  Z_mod_calc : Alu
     generic map (
-      N => 16)
+      N => 19)
     port map (
-      A   => Buff_Out,
-      B   => Angle,
-      Cmd => Sign,
+      A   => Z_in,
+      B   => "0110010010000111110",     -- 2pi
+      Cmd => '0',
       S   => Alu_out);
+
+  Cad_find : Cadran_finder
+    generic map (
+      N => 19)
+    port map (
+      Clk          => Clk,
+      Reset        => Reset,
+      Z_in_mod     => Buff_Out,
+      Comp_val_sel => Comp_val_sel,
+      Shift_enable => Shift_enable,
+      Data_sel     => Sig_data_sel, 
+      XY_out_cmd   => XY_out_cmd
+      );
+
+  Z0_val_calc : Z0_value_calculation
+    generic map (
+      N => 19)
+    port map (
+      Clk      => Clk,
+      Reset    => Reset,
+      Z_in_mod => Buff_Out,
+      Data_sel => Sig_data_sel,
+      Buff_OE  => Buff_OE_Z0,
+      Z_conv   => Z0_out
+      );
+
 end A;

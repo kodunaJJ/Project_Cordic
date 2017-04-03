@@ -14,19 +14,21 @@ end Shift_reg;
 
 architecture A of Shift_reg is
 
-  Reg_value : std_logic_vector(N-1 downto 0);
-  
+  signal Reg_value : unsigned(N-1 downto 0);
+
 begin
 
-  Shift_reg_out <= Reg_value;
-    P_Shift : process (Clk)
+  Shift_reg_out <= std_logic_vector(Reg_value);
+  P_Shift : process (Clk)
   begin  -- process P_buff
     if(Clk = '1' and Clk'event) then
       if Reset = '1' then
         Shift_reg_out <= (others => '0');
       elsif Shift_enable = '1' then
-        Reg_value <= srl(Reg_value);
+        Reg_value      <= Reg_value srl 1;
         Reg_value(N-1) <= Shift_reg_in;
       end if;
     end if;
-  end process P_buff;
+  end process P_Shift;
+
+end architecture;
