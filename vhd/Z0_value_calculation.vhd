@@ -87,7 +87,7 @@ begin
       );
 
   Alu_A <= Z_in_mod;                    -- op1 affectation
-  Sig_data_sel(0) <= not( Data_sel(0) xor Data_sel(1) xor Data_sel(2) xor Data_sel(3));
+  Sig_data_sel(0) <= Data_sel(0) xor Data_sel(1) xor Data_sel(2) xor Data_sel(3);
   Sig_data_sel(1) <= not(Data_sel(3)) and Data_sel(1);
   Sig_data_sel(2) <= Data_sel(3);
 

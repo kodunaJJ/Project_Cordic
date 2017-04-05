@@ -40,7 +40,7 @@ architecture A of Cadran_finder is
   --       Buff_Out : out std_logic_vector(N-1 downto 0));
   --end component;
 
-  component Comparator_GE
+  component Comparator_G
     generic (
       N : positive);
 
@@ -91,7 +91,7 @@ begin
   --    Mux_out => Comparator_A
   --    );
 
-  Comparator_pi_4 : Comparator_GE
+  Comparator_pi_4 : Comparator_G
     generic map (
       N => 19)
     port map (
@@ -100,7 +100,7 @@ begin
       S => Comparator_pi_4_out
       );
 
-  Comparator_3pi_4 : Comparator_GE
+  Comparator_3pi_4 : Comparator_G
     generic map (
       N => 19)
     port map (
@@ -109,7 +109,7 @@ begin
       S => Comparator_3pi_4_out
       );
 
-  Comparator_5pi_4 : Comparator_GE
+  Comparator_5pi_4 : Comparator_G
     generic map (
       N => 19)
     port map (
@@ -118,7 +118,7 @@ begin
       S => Comparator_5pi_4_out
       );
 
-  Comparator_7pi_4 : Comparator_GE
+  Comparator_7pi_4 : Comparator_G
     generic map (
       N => 19)
     port map (

@@ -11,8 +11,6 @@ entity Angle_conv is
         Z_in           : in  std_logic_vector(N-1 downto 0);
         Buff_OE_Cad_in : in  std_logic;
         Buff_OE_Z0     : in  std_logic;
-        Shift_enable   : in  std_logic;
-        Comp_val_sel   : in  std_logic_vector(1 downto 0);
         XY_out_cmd     : out std_logic_vector(3 downto 0);
         Z0_out         : out std_logic_vector(N-4 downto 0)
         );
