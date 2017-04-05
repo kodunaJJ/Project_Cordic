@@ -58,11 +58,7 @@ architecture A of Angle_conv is
   component Cadran_finder
     generic (
       N : positive);
-    port (Clk          : in  std_logic;
-          Reset        : in  std_logic;
-          Z_in_mod     : in  std_logic_vector(N-1 downto 0);
-          Comp_val_sel : in  std_logic_vector(1 downto 0);
-          Shift_enable : in  std_logic;
+    port (Z_in_mod     : in  std_logic_vector(N-1 downto 0);
           Data_sel     : out std_logic_vector(3 downto 0);
           XY_out_cmd   : out std_logic_vector (3 downto 0));
   end component;
@@ -121,11 +117,7 @@ begin  -- A
     generic map (
       N => 19)
     port map (
-      Clk          => Clk,
-      Reset        => Reset,
       Z_in_mod     => Buff_Out,
-      Comp_val_sel => Comp_val_sel,
-      Shift_enable => Shift_enable,
       Data_sel     => Sig_data_sel, 
       XY_out_cmd   => XY_out_cmd
       );

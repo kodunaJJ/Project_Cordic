@@ -2,16 +2,16 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity Comparator_G is
+entity Comparator_GE is
   generic (
     N : positive);
 
   port (A, B : in  std_logic_vector(N-1 downto 0);
         S    : out std_logic
         );
-end Comparator_G;
+end Comparator_GE;
 
-architecture A of Comparator_G is
+architecture A of Comparator_GE is
 
   signal A_u : unsigned(N-1 downto 0);
   signal B_u : unsigned(N-1 downto 0);
