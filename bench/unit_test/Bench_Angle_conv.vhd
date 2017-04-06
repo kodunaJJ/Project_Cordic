@@ -23,14 +23,15 @@ architecture test of test_Angle_conv is
 
   signal Sig_Clk            : std_logic;
   signal Sig_Reset          : std_logic;
-  signal Sig_Z_in           : std_logic_vector(18 downto 0);
+  signal Sig_Z_in           : std_logic_vector(18 downto 0) := "0000000000000000000";
   signal Sig_Buff_OE_Z0     : std_logic;
   signal Sig_Buff_OE_Cad_in : std_logic;
   signal Sig_XY_out_cmd     : std_logic_vector (3 downto 0);
   signal Sig_Z0_out         : std_logic_vector(15 downto 0);
+  signal inc_value     : std_logic_vector(18 downto 0) := "0000001011001010110";  -- pi/18
 
 
-  constant delay_400 : time := 400 ns;
+  constant delay_3u : time := 3 us;
   constant delay_60  : time := 60 ns;
   constant delay_10  : time := 10 ns;
   constant delay_5   : time := 5 ns;
@@ -51,48 +52,61 @@ begin
       Z0_out         => Sig_Z0_out);
 
 
+  --process
+  --begin
+  --  Sig_Buff_OE_Z0     <= '1';
+  --  Sig_Buff_OE_Cad_in <= '1';
+  --  Sig_Z_in       <= "0000000000000000000";
+  --  wait for delay_60;
+
+  --  Sig_Buff_OE_Z0     <= '1';
+  --  Sig_Buff_OE_Cad_in <= '1';
+  --  Sig_Z_in       <= "0001100100100001110";  --pi/2
+  --  wait for delay_60;
+
+  --  Sig_Buff_OE_Z0     <= '1';
+  --  Sig_Buff_OE_Cad_in <= '1';
+  --  Sig_Z_in       <= "0011001001000011110";  --pi
+  --  wait for delay_60;
+
+
+  --  Sig_Buff_OE_Z0     <= '1';
+  --  Sig_Buff_OE_Cad_in <= '1';
+  --  Sig_Z_in       <= "0100101101100101110";  --3pi/2
+  --  wait for delay_60;
+
+  --  Sig_Buff_OE_Z0     <= '1';
+  --  Sig_Buff_OE_Cad_in <= '1';
+  --  Sig_Z_in       <= "0110010010000111110";  --2pi
+  --  wait for delay_60;
+
+  --  Sig_Buff_OE_Z0     <= '1';
+  --  Sig_Buff_OE_Cad_in <= '1';
+  --  Sig_Z_in       <= "0100101101100101110";
+  --  wait for delay_60;
+
+  --  Sig_Buff_OE_Z0     <= '1';
+  --  Sig_Buff_OE_Cad_in <= '1';
+  --  Sig_Z_in       <= "0100101101100101110";
+
+  --end process;
+
+  process_angle_sweep : process 
+  begin
+        Sig_Buff_OE_Z0     <= '1';
+        Sig_Buff_OE_Cad_in <= '1';
+        Sig_Z_in <= std_logic_vector(unsigned(Sig_Z_in) + unsigned(inc_value));
+	wait for delay_60;
+
+  end process process_angle_sweep;
+
+
+
+
+
   process
   begin
-    Sig_Buff_OE_Z0     <= '1';
-    Sig_Buff_OE_Cad_in <= '1';
-    Sig_Z_in       <= "0000000000000000000";
-    wait for delay_60;
-
-    Sig_Buff_OE_Z0     <= '1';
-    Sig_Buff_OE_Cad_in <= '1';
-    Sig_Z_in       <= "0001100100100001110";  --pi/2
-    wait for delay_60;
-
-    Sig_Buff_OE_Z0     <= '1';
-    Sig_Buff_OE_Cad_in <= '1';
-    Sig_Z_in       <= "0011001001000011110";  --pi
-    wait for delay_60;
-
-
-    Sig_Buff_OE_Z0     <= '1';
-    Sig_Buff_OE_Cad_in <= '1';
-    Sig_Z_in       <= "0100101101100101110";  --3pi/2
-    wait for delay_60;
-
-    Sig_Buff_OE_Z0     <= '1';
-    Sig_Buff_OE_Cad_in <= '1';
-    Sig_Z_in       <= "0110010010000111110";  --2pi
-    wait for delay_60;
-
-    Sig_Buff_OE_Z0     <= '1';
-    Sig_Buff_OE_Cad_in <= '1';
-    Sig_Z_in       <= "0100101101100101110";
-    wait for delay_60;
-
-    Sig_Buff_OE_Z0     <= '1';
-    Sig_Buff_OE_Cad_in <= '1';
-    Sig_Z_in       <= "0100101101100101110";
-
-  end process;
-
-  process
-  begin
-    wait for delay_400;
+    wait for delay_3u;
     assert false report " FIN DE LA SIMULATION" severity failure;
   end process;
 -- process for signal Reset

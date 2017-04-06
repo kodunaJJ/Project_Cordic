@@ -8,12 +8,13 @@ entity Cordic_FPGA is
   generic (
     N : positive := 19);
   port(
-    Z_in         : in  std_logic_vector(7 downto 0);
+    Z_in         : in  std_logic_vector(N-1 downto 0);  --change for bench
     Clk          : in  std_logic;
     Reset        : in  std_logic;
     Start_conv   : in  std_logic;
+    Start_cal    : in  std_logic; -- change for bench
     End_cal      : out std_logic;
-    X_out, Y_out : out std_logic_vector(N-1 downto 0);
+    X_out, Y_out : out std_logic_vector(N-4 downto 0)
     );
 end Cordic_FPGA;
 
@@ -60,10 +61,10 @@ architecture A of Cordic_FPGA is
 
   end component Sin_Cos_attribution;
 
-  component Fsm_FPGA_interface is
+  --component Fsm_FPGA_interface is
 
 
-  end Fsm_FPGA_interface;
+  --end Fsm_FPGA_interface;
 
   component Buff is
     generic (
@@ -81,7 +82,7 @@ architecture A of Cordic_FPGA is
     port (In1, In2 : in  std_logic_vector(N-1 downto 0);
           Sel      : in  std_logic;
           Mux_out  : out std_logic_vector (N-1 downto 0));
-  end component Mux_out;
+  end component Mux2x1;
 
   component Dmux1x3 is
     generic (
@@ -102,17 +103,17 @@ architecture A of Cordic_FPGA is
   signal X             : std_logic_vector(N-4 downto 0);
   signal Y             : std_logic_vector(N-4 downto 0);
   signal Sig_Z_in      : std_logic_vector(N-1 downto 0);
-  signal Sig_attrib    : std_logic;
+  signal Sig_attrib    : std_logic_vector(3 downto 0);
 
   -- buffer' input values
-  signal Z_in_lsb      : std_logic_vector(7 downto 0);
-  signal Z_in_mid      : std_logic_vector(7 downto 0);
-  signal Z_in_msb      : std_logic_vector(7 downto 0);
+  signal Z_in_lsb : std_logic_vector(7 downto 0);
+  signal Z_in_mid : std_logic_vector(7 downto 0);
+  signal Z_in_msb : std_logic_vector(7 downto 0);
 
   -- buffer' output values
-  signal Z_lsb      : std_logic_vector(7 downto 0);
-  signal Z_mid      : std_logic_vector(7 downto 0);
-  signal Z_msb      : std_logic_vector(7 downto 0);
+  signal Z_lsb : std_logic_vector(7 downto 0);
+  signal Z_mid : std_logic_vector(7 downto 0);
+  signal Z_msb : std_logic_vector(7 downto 0);
 
 begin
 
@@ -130,7 +131,7 @@ begin
       Y_out     => Y
       );
 
-  Angle_conv : Angle_conv
+  Angle_conversion : Angle_conv
     generic map(
       N => 19
       )
@@ -154,63 +155,65 @@ begin
       X           => X,
       Y           => Y,
       cmd         => Sig_attrib,
-      Out_reg_ena => '1';
-      X_out       => X_out
+      Out_reg_ena => '1',
+      X_out       => X_out,
       Y_out       => Y_out
       );
 
-  Fsm : Fsm_FPGA_interface
-    generic map (
+  --Fsm : Fsm_FPGA_interface
+  --  generic map (
 
-      )
-    port map (
+  --    )
+  --  port map (
 
-      );
+  --    );
 
-  In_buff_lsb : Buff
-    generic map (
-      N => 8)
-    port map (
-      Buff_in  => Z_in_lsb,
-      Buff_OE  => ,
-      Clk      => Clk,
-      Reset    => Reset,
-      Buff_Out => Z_lsb
-      );
+  --In_buff_lsb : Buff
+  --  generic map (
+  --    N => 8)
+  --  port map (
+  --    Buff_in  => Z_in_lsb,
+  --    Buff_OE  => ,
+  --    Clk      => Clk,
+  --    Reset    => Reset,
+  --    Buff_Out => Z_lsb
+  --    );
 
-  In_buff_mid : Buff
-    generic map (
-      N => 8)
-    port map (
-      Buff_in  => Z_in_mid,
-      Buff_OE  => ,
-      Clk      => Clk,
-      Reset    => Reset,
-      Buff_Out => Z_mid
-      );
+  --In_buff_mid : Buff
+  --  generic map (
+  --    N => 8)
+  --  port map (
+  --    Buff_in  => Z_in_mid,
+  --    Buff_OE  => ,
+  --    Clk      => Clk,
+  --    Reset    => Reset,
+  --    Buff_Out => Z_mid
+  --    );
 
-  In_buff_msb : Buff
-    generic map (
-      N => 8)
-    port map (
-      Buff_in  => Z_in_msb,
-      Buff_OE  => ,
-      Clk      => Clk,
-      Reset    => Reset,
-      Buff_Out => Z_msb
-      );
+  --In_buff_msb : Buff
+  --  generic map (
+  --    N => 8)
+  --  port map (
+  --    Buff_in  => Z_in_msb,
+  --    Buff_OE  => ,
+  --    Clk      => Clk,
+  --    Reset    => Reset,
+  --    Buff_Out => Z_msb
+  --    );
 
-  In_Dmux : Dmux1x3
-      generic map (
-    N => 8)
-  port map (
-    Input => Z_in,
-    Sel => Data_dest,
-    Out1  => Z_in_lsb,
-    Out2  => Z_in_mid,
-    Out3  => Z_in_msb
-    );
+  --In_Dmux : Dmux1x3
+  --  generic map (
+  --    N => 8)
+  --  port map (
+  --    Input => Z_in,
+  --    Sel   => Data_dest,
+  --    Out1  => Z_in_lsb,
+  --    Out2  => Z_in_mid,
+  --    Out3  => Z_in_msb
+  --    );
 
-  Sig_Z_in <= Z_in_msb & Z_in_mid & Z_in_lsb;
-
+  --Sig_Z_in <= Z_in_msb & Z_in_mid & Z_in_lsb;
+  Sig_Z_in <= Z_in;                     --change for bench
+  Sig_start_cal <= Start_cal;           -- change for bench
+  End_cal <= Sig_end_cal; -- end_cal : cordic_FPGA
 end architecture;

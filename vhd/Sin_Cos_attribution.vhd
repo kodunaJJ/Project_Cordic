@@ -59,7 +59,7 @@ begin
       N => 16)
     port map (
       In1     => X_complement,
-      In2     => X,
+      In2     => Mux_X_out,
       Sel     => X_sign_cmd,
       Mux_out => Mux_comp_X_out
       );
@@ -69,17 +69,17 @@ begin
       N => 16)
     port map (
       In1     => Y_complement,
-      In2     => Y,
+      In2     => Mux_Y_out,
       Sel     => Y_sign_cmd,
-      Mux_out => Mux_comp_X_out
+      Mux_out => Mux_comp_Y_out
       );
 
   Mux_switch_X : Mux2x1
     generic map (
       N => 16)
     port map (
-      In1     => Mux_comp_X_out,
-      In2     => Mux_comp_Y_out,
+      In1     => X,
+      In2     => Y,
       Sel     => Switch_cmd,
       Mux_out => Mux_X_out
       );
@@ -88,8 +88,8 @@ begin
     generic map (
       N => 16)
     port map (
-      In1     => Mux_comp_Y_out,
-      In2     => Mux_comp_X_out,
+      In1     => Y,
+      In2     => X,
       Sel     => Switch_cmd,
       Mux_out => Mux_Y_out
       );
@@ -98,7 +98,7 @@ begin
     generic map (
       N => 16)
     port map (
-      Buff_in  => Mux_X_out,
+      Buff_in  => Mux_comp_X_out,
       Buff_OE  => '1',
       Clk      => Clk,
       Reset    => Reset,
@@ -109,7 +109,7 @@ begin
     generic map (
       N => 16)
     port map (
-      Buff_in  => Mux_Y_out,
+      Buff_in  => Mux_comp_Y_out,
       Buff_OE  => '1',
       Clk      => Clk,
       Reset    => Reset,
@@ -120,7 +120,7 @@ begin
   X_sign_cmd <= cmd(2) or not(cmd(0)); -- positive sign if true
   Y_sign_cmd <= not(cmd(1)) or cmd(3); -- positive sign if true
 
-  X_complement <= std_logic_vector(unsigned(not(X))+ ONE);
-  Y_complement <= std_logic_vector(unsigned(not(Y))+ ONE);                                 
+  X_complement <= std_logic_vector(unsigned(not(Mux_X_out))+ ONE);
+  Y_complement <= std_logic_vector(unsigned(not(Mux_Y_out))+ ONE);                                 
 
 end architecture;
