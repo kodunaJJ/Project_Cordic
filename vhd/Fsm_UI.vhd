@@ -4,9 +4,6 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity Fsm_UI is
-  generic (
-    N : positive
-    );
   port(Clk                   : in  std_logic;
        Reset                 : in  std_logic;
        Load_button           : in  std_logic;
@@ -56,15 +53,13 @@ begin
     end if;
   end process P_STATE;
 
-  P_FSM : process(Current_State, Current_load_count, Current_XY_value_sel, Load_button,
-                  Start_button, New_calc_button, Toggle_display_button, XY_msb)
+  P_FSM : process(Current_State, Current_load_count, Current_XY_value_sel, Load_button, Start_button, New_calc_button, Toggle_display_button, XY_msb, End_cal)
   begin
 
     Next_load_count   <= Current_load_count;
     Next_State        <= Idle;
     Next_XY_value_sel <= '0';
-    XY_value_sel      <= '0';
-    Start_cal         <= '0';
+    --Start_cal         <= '0';
     --Start_conv      <= '0';
     Led_sign          <= '0';
     Z_lsb_reg_Ena     <= '0';
@@ -77,19 +72,19 @@ begin
       when Idle =>
         Next_load_count <= (others => '0');
 
-        if (Load_button'event and Load_button = '0') then
+        if (Load_button'event and (Load_button = '0')) then
           Next_State    <= Load;
           Z_lsb_reg_Ena <= '1';
-        elsif (Start_button'event and Start_button = '0') then
+        elsif (Start_button'event and (Start_button = '0')) then
           Start_cal <= '1';
-        elsif (End_cal'event and End_cal = '1') then
+        elsif (End_cal'event and (End_cal = '1')) then
           Next_State <= Display;
-        end if;
+        end if;  
 
       when Load =>
         Next_State <= Load;
 
-        if (Load_button'event and Load_button = '0') then
+        if (Load_button'event and (Load_button = '0')) then
           Next_load_count <= load_count + "001";
         end if;
 
@@ -122,17 +117,18 @@ begin
       when Display =>
         Led_sign <= XY_msb;
 
-        if(Toggle_display_button'event and Toggle_display_button = '0') then
+        if(Toggle_display_button'event and (Toggle_display_button = '0')) then
           Next_XY_value_sel <= not Current_XY_value_sel;
         end if;
 
-        if(New_calc_button'event and New_calc_button = '0') then
+        if(New_calc_button'event and (New_calc_button = '0')) then
           Next_State <= Idle;
         end if;
 
+      when others =>
+        Next_State <= Idle;
+
     end case;
-
-
   end process P_FSM;
 
 end architecture;

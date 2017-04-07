@@ -14,11 +14,10 @@ entity Cordic is
   generic (
     N : positive := 19);
   port(
-    Z_in                  : in  std_logic_vector(N-1 downto 0);  --change for bench
+    Z_in                  : in  std_logic_vector(7 downto 0);  --change for bench
     Clk                   : in  std_logic;
     Reset                 : in  std_logic;
     --Start_conv   : in  std_logic;
-    Start_cal             : in  std_logic;  -- change for bench
     Load_button           : in  std_logic;
     Start_button          : in  std_logic;
     New_calc_button       : in  std_logic;
@@ -73,9 +72,6 @@ architecture A of Cordic is
   end component Sin_Cos_attribution;
 
   component Fsm_UI is
-    generic (
-      N : positive
-      );
     port(Clk                   : in  std_logic;
          Reset                 : in  std_logic;
          Load_button           : in  std_logic;
@@ -132,7 +128,8 @@ architecture A of Cordic is
   signal Sig_end_cal   : std_logic;
   signal X             : std_logic_vector(N-4 downto 0);
   signal Y             : std_logic_vector(N-4 downto 0);
-  signal Sig_Z_in      : std_logic_vector(N-1 downto 0);
+  signal Sig_Z_in      : std_logic_vector(7 downto 0);
+  signal Sig_Z_in_angle_conv : std_logic_vector(N-1 downto 0);
   signal Sig_attrib    : std_logic_vector(3 downto 0);
 
   -- buffer' input values
@@ -183,7 +180,7 @@ begin
     port map(
       Clk            => Clk,
       Reset          => Reset,
-      Z_in           => Sig_Z_in,
+      Z_in           => Sig_Z_in_angle_conv,
       Buff_OE_Cad_in => '1',
       Buff_OE_Z0     => '1',
       XY_out_cmd     => Sig_attrib,
@@ -206,9 +203,7 @@ begin
       );
 
   Fsm : Fsm_UI
-    generic map (
-      N => 2
-      )
+
     port map (
       Clk                   => Clk,
       Reset                 => Reset,
@@ -281,9 +276,12 @@ begin
       Mux_out => Sig_XY_output
       );
 
-  --Sig_Z_in <= Z_in_msb & Z_in_mid & Z_in_lsb;
+  --Sig_Z_in_angle_conv <= (Z_in_msb & Z_in_mid & Z_in_lsb);
+  Sig_Z_in_angle_conv(7 downto 0) <= Z_in_lsb;
+  Sig_Z_in_angle_conv(15 downto 8) <= Z_in_mid;
+  Sig_Z_in_angle_conv(18 downto 16) <= Z_in_msb(2 downto 0);
   Sig_Z_in      <= Z_in;                --change for bench
-  Sig_start_cal <= Start_cal;           -- change for bench
+  --Sig_start_cal <= Start_cal;           -- change for bench
   End_cal       <= Sig_end_cal;         -- end_cal : cordic_FPGA
   Sig_XY_msb <= Sig_XY_output(N-4);
   XY_output <= Sig_XY_output; -- value to display
