@@ -14,22 +14,23 @@ entity Fsm_UI is
        New_calc_button       : in  std_logic;
        Toggle_display_button : in  std_logic;
        XY_msb                : in  std_logic;
+       End_cal               : in  std_logic;
        Led_sign              : out std_logic;
        XY_value_sel          : out std_logic;
-       Start_conv            : out std_logic;
+       --Start_conv            : out std_logic;
        Start_cal             : out std_logic;
        Z_lsb_reg_Ena         : out std_logic;
        Z_mid_reg_Ena         : out std_logic;
        Z_msb_reg_Ena         : out std_logic;
        Z_in_part_sel         : out std_logic_vector(2 downto 0)  -- lsb/mid/msb byte selection of Zin 
-       --Op_code_reg_ena       : out std_logic
+   --Op_code_reg_ena       : out std_logic
        );
 end Fsm_UI;
 
 architecture A of Fsm_UI is
   type STATE is (Idle, Load, Display);
   signal Current_State, Next_State               : State;
-  signal Current_load_count                      : Next_load_count : unsigned(2 downto 0);
+  signal Current_load_count, Next_load_count     : unsigned(2 downto 0);
   signal Current_XY_value_sel, Next_XY_value_sel : std_logic;
   signal load_count                              : unsigned(2 downto 0);
 
@@ -59,14 +60,16 @@ begin
                   Start_button, New_calc_button, Toggle_display_button, XY_msb)
   begin
 
-    Next_load_count <= Current_load_count;
-    XY_value_sel    <= '0';
-    Start_cal       <= '0';
-    Start_conv      <= '0';
-    Led_sign        <= '0';
-    Z_lsb_reg_Ena   <= '0';
-    Z_mid_reg_Ena   <= '0';
-    Z_msb_reg_Ena   <= '0';
+    Next_load_count   <= Current_load_count;
+    Next_State        <= Idle;
+    Next_XY_value_sel <= '0';
+    XY_value_sel      <= '0';
+    Start_cal         <= '0';
+    --Start_conv      <= '0';
+    Led_sign          <= '0';
+    Z_lsb_reg_Ena     <= '0';
+    Z_mid_reg_Ena     <= '0';
+    Z_msb_reg_Ena     <= '0';
     --Op_code_reg_ena <= '0';
 
     case Current_State is
@@ -74,17 +77,13 @@ begin
       when Idle =>
         Next_load_count <= (others => '0');
 
-        if (End_cal = '1' and Load_button = '1')) then
-          Next_State <= Idle;
-        elsif (Load_button'event and Load_button = '0') then
-          Next_State <= Load;
+        if (Load_button'event and Load_button = '0') then
+          Next_State    <= Load;
           Z_lsb_reg_Ena <= '1';
         elsif (Start_button'event and Start_button = '0') then
           Start_cal <= '1';
-        elsif (End_cal = '0') then
+        elsif (End_cal'event and End_cal = '1') then
           Next_State <= Display;
-        else
-          Next_State <= Idle;
         end if;
 
       when Load =>
@@ -101,10 +100,11 @@ begin
 
           when "010" =>
             Z_msb_reg_Ena <= '1';
-            
+
           when others =>
             null;
-            
+        end case;
+
 
         --if (load_count = "011") then
         --  -- see what to do
@@ -115,7 +115,7 @@ begin
         --  Start_conv <= '1';
         --end if;
 
-        if (load_count = "011" and (Start_button'event and Start_button = '0')) then
+        if (load_count = "011") then
           Next_State <= Idle;
         end if;
 
@@ -123,7 +123,7 @@ begin
         Led_sign <= XY_msb;
 
         if(Toggle_display_button'event and Toggle_display_button = '0') then
-          Next_XY_value_sel <= not Current_State;
+          Next_XY_value_sel <= not Current_XY_value_sel;
         end if;
 
         if(New_calc_button'event and New_calc_button = '0') then
