@@ -25,22 +25,22 @@ architecture test of test_Cordic_FPGA is
   signal Sig_Clk        : std_logic;
   signal Sig_Reset      : std_logic;
   signal Sig_Z_in       : std_logic_vector(18 downto 0);
-  signal Sig_Start_cal  : std_logic := '0';
-  signal Sig_Start_conv : std_logic := '0';
+  signal Sig_Start_cal  : std_logic                     := '0';
+  signal Sig_Start_conv : std_logic                     := '0';
   signal Sig_X_out      : std_logic_vector (15 downto 0);
   signal Sig_Y_out      : std_logic_vector(15 downto 0);
   signal Sig_End_cal    : std_logic;
   signal inc_value      : std_logic_vector(18 downto 0) := "0000001011001010110";  -- pi/18
 
 
-  constant delay_3u : time := 3 us;
+  constant delay_3u  : time := 3 us;
   constant delay_200 : time := 200 ns;
-  constant delay_60 : time := 60 ns;
-  constant delay_10 : time := 10 ns;
-  constant delay_20 : time := 20 ns;
-  constant delay_5  : time := 5 ns;
-  constant delay_2  : time := 2 ns;
-  constant delay_1  : time := 1 ns;
+  constant delay_60  : time := 60 ns;
+  constant delay_10  : time := 10 ns;
+  constant delay_20  : time := 20 ns;
+  constant delay_5   : time := 5 ns;
+  constant delay_2   : time := 2 ns;
+  constant delay_1   : time := 1 ns;
 
 begin
   Conversion : Cordic_FPGA
@@ -103,7 +103,7 @@ begin
   --    Sig_Z_in           <= std_logic_vector(unsigned(Sig_Z_in) + unsigned(inc_value));
   --    Sig_Start_conv <= '1';
   --    Sig_Start_conv     <= '0' after delay_20;
-      
+
   --    --Sig_Start_cal <= '1' after 4*delay_20;
   --    --Sig_Start_cal      <= '0' after 5*delay_20;
   --  else
@@ -115,14 +115,138 @@ begin
 
   process
   begin
-    Sig_Z_in <= "0000001011001010110";
+    --Sig_Z_in       <= "0000000000000000000";  -- 0
+    --Sig_Z_in       <= "0000000010001110110";  -- pi/90
+
+    --Sig_Z_in       <= "0000001011001010110";  -- pi/18
+    --Sig_Z_in       <= "0000100001100000100";  -- pi/6
+    --Sig_Z_in       <= "0000110010010000110";  -- pi/4
+    --Sig_Z_in       <= "0001000011000001010";  -- pi/3
+    --Sig_Z_in       <= "0010000110000010100";  -- 2pi/3
+    --Sig_Z_in       <= "0010010110110010110";  -- 3pi/4
+    --Sig_Z_in       <= "0011001001000011110";  -- pi
+    --Sig_Z_in       <= "0011011111011001100";  -- 10pi/9  
+    --Sig_Z_in       <= "0011111011010100110";  -- 5pi/4
+    --Sig_Z_in       <= "0101011111110110110";  -- 7pi/4
+    -- Sig_Z_in       <= "0101110000100111010";  -- 11pi/6
+    --Sig_Z_in       <= "0110010010000111110";  -- 2pi 
+
+
+    --Sig_Z_in       <= "1111111101110001010";  -- -pi/90
+    --Sig_Z_in       <= "1111110100110101010";  -- -pi/18
+    --Sig_Z_in       <= "1111011110011111100";  -- -pi/6
+    --Sig_Z_in       <= "1111001101101111010";  -- -pi/4
+    --Sig_Z_in       <= "1101111001111101100";  -- -2pi/3
+    Sig_Z_in       <= "1101101001001101010";  -- -3pi/4
+    --Sig_Z_in       <= "1100110110111100010";  -- -pi
+    --Sig_Z_in       <= "1100100000100110100";  -- -10pi/9
+    --Sig_Z_in       <= "1100000100101011010";  -- -5pi/4
+    --Sig_Z_in       <= "1010100000001001010";  -- -7pi/4
+    --Sig_Z_in       <= "1010001111011000110";  -- -11pi/6
+    --Sig_Z_in       <= "1001101101111000010";  -- -2pi
     Sig_Start_conv <= '1';
     wait for 3*delay_20;
     Sig_Start_conv <= '0';
-    Sig_Start_cal <= '1';
+    Sig_Start_cal  <= '1';
     wait for 2*delay_20;
-    
-    end process;
+
+    --Sig_Z_in       <= "0000001011001010110";  -- pi/18
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+    --Sig_Z_in       <= "0000100001100000100";  -- pi/6 
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+    --Sig_Z_in       <= "0000110010010000110";  -- pi/4 
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+
+    --Sig_Z_in       <= "0001000011000001010";  -- pi/3 
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+
+    --Sig_Z_in       <= "0010000110000010100";  -- 2pi/3 
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+    --Sig_Z_in       <= "0010010110110010110";  -- 3pi/4 
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+    --Sig_Z_in       <= "0011001001000011110";  -- pi   
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+    --Sig_Z_in       <= "0011111011010100110";  -- 5pi/4 
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+    --Sig_Z_in       <= "0100101101100101110";  -- 3pi/2 
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+    --Sig_Z_in       <= "0100001100000101010";  -- 4pi/3   
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+    --Sig_Z_in       <= "0101011111110110110";  -- 7pi/4   
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+    --Sig_Z_in       <= "0101110000100111010";  -- 11pi/6     
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+    --Sig_Z_in       <= "0110010010000111110";  -- 2pi   
+    --Sig_Start_conv <= '1';
+    --wait for 3*delay_20;
+    --Sig_Start_conv <= '0';
+    --Sig_Start_cal  <= '1';
+    --wait for 2*delay_20;
+
+
+
+
+  end process;
 
 
 
@@ -136,7 +260,7 @@ begin
 -- process for signal Reset
   process
   begin
- 
+
     Sig_Reset <= '1';
     wait for delay_20*3;
     Sig_Reset <= '0';
