@@ -10,7 +10,7 @@ entity Dmux1x3 is
     );
   port(
     Input : in  std_logic_vector(N-1 downto 0);
-    Sel   : in  std_logic_vector(1 downto 0);
+    Sel   : in  std_logic_vector(2 downto 0);
     Out1  : out std_logic_vector(N-1 downto 0);
     Out2  : out std_logic_vector(N-1 downto 0);
     Out3  : out std_logic_vector(N-1 downto 0)
@@ -28,11 +28,11 @@ begin
     Out2 <= (others => '0');
     Out3 <= (others => '0');
     case Sel is
-      when "00" =>
+      when "000" =>
         Out1 <= Input;
-      when "01" =>
+      when "001" =>
         Out2 <= Input;
-      when "10" =>
+      when "010" =>
         Out3 <= Input;
       when others => null;
                      
