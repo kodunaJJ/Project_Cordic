@@ -71,9 +71,11 @@ begin
 
       when Idle =>
         Next_load_count <= (others => '0');
+        Start_cal <= '0';
 
         if (Load_button'event and (Load_button = '0')) then
           Next_State    <= Load;
+          Next_load_count <= load_count + "001";
           Z_lsb_reg_Ena <= '1';
         elsif (Start_button'event and (Start_button = '0')) then
           Start_cal <= '1';
@@ -86,19 +88,25 @@ begin
 
         if (Load_button'event and (Load_button = '0')) then
           Next_load_count <= load_count + "001";
+          if (load_count = "001") then
+            Z_mid_reg_Ena <= '1';
+          elsif (load_count = "010") then
+            Z_msb_reg_Ena <= '1';
+          end if;
+          
         end if;
 
-        case load_count is
+        --case load_count is
 
-          when "001" =>
-            Z_mid_reg_Ena <= '1';
+        --  when "001" =>
+        --    Z_mid_reg_Ena <= '1';
 
-          when "010" =>
-            Z_msb_reg_Ena <= '1';
+        --  when "010" =>
+        --    Z_msb_reg_Ena <= '1';
 
-          when others =>
-            null;
-        end case;
+        --  when others =>
+        --    null;
+        --end case;
 
 
         --if (load_count = "011") then
@@ -116,6 +124,8 @@ begin
 
       when Display =>
         Led_sign <= XY_msb;
+        Next_State <= Display;
+        Next_XY_value_sel <= Current_XY_value_sel;
 
         if(Toggle_display_button'event and (Toggle_display_button = '0')) then
           Next_XY_value_sel <= not Current_XY_value_sel;

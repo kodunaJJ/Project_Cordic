@@ -277,10 +277,10 @@ begin
       );
 
   --Sig_Z_in_angle_conv <= (Z_in_msb & Z_in_mid & Z_in_lsb);
-  Sig_Z_in_angle_conv(7 downto 0) <= Z_in_lsb;
-  Sig_Z_in_angle_conv(15 downto 8) <= Z_in_mid;
-  Sig_Z_in_angle_conv(18 downto 16) <= Z_in_msb(2 downto 0);
-  Sig_Z_in      <= Z_in;                --change for bench
+  Sig_Z_in_angle_conv(7 downto 0) <= Z_lsb;
+  Sig_Z_in_angle_conv(15 downto 8) <= Z_mid;
+  Sig_Z_in_angle_conv(18 downto 16) <= Z_msb(2 downto 0);
+  --Sig_Z_in      <= Z_in;                --change for bench
   --Sig_start_cal <= Start_cal;           -- change for bench
   End_cal       <= Sig_end_cal;         -- end_cal : cordic_FPGA
   Sig_XY_msb <= Sig_XY_output(N-4);
