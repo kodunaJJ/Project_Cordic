@@ -29,12 +29,18 @@ architecture A of Fsm_UI is
   signal Current_State, Next_State               : State;
   signal Current_load_count, Next_load_count     : unsigned(2 downto 0);
   signal Current_XY_value_sel, Next_XY_value_sel : std_logic;
+  signal Current_Z_in_lsb_ena, Next_Z_in_lsb_ena : std_logic;
+  signal Current_Z_in_mid_ena, Next_Z_in_mid_ena : std_logic;
+  signal Current_Z_in_msb_ena, Next_Z_in_msb_ena : std_logic;
   signal load_count                              : unsigned(2 downto 0);
 
 begin
 
   load_count    <= Current_load_count;
   XY_value_sel  <= Current_XY_value_sel;
+  Z_lsb_reg_Ena <= Current_Z_in_lsb_ena;
+  Z_mid_reg_Ena <= Current_Z_in_mid_ena;
+  Z_msb_reg_Ena <= Current_Z_in_msb_ena;
   Z_in_part_sel <= std_logic_vector(load_count);
 
 
@@ -45,68 +51,78 @@ begin
         Current_State        <= Idle;
         Current_load_count   <= (others => '0');
         Current_XY_value_sel <= '0';
+        Current_Z_in_lsb_ena <= '0';
+        Current_Z_in_mid_ena <= '0';
+        Current_Z_in_msb_ena <= '0';
       else
         Current_State        <= Next_State;
         Current_load_count   <= Next_load_count;
         Current_XY_value_sel <= Next_XY_value_sel;
+        Current_Z_in_lsb_ena <= Next_Z_in_lsb_ena;
+        Current_Z_in_mid_ena <= Next_Z_in_mid_ena;
+        Current_Z_in_msb_ena <= Next_Z_in_msb_ena;
       end if;
     end if;
   end process P_STATE;
 
-  P_FSM : process(Current_State, Current_load_count, Current_XY_value_sel, Load_button, Start_button, New_calc_button, Toggle_display_button, XY_msb, End_cal)
+  P_FSM : process(Current_State, load_count, Current_XY_value_sel, Current_Z_in_lsb_ena, Current_Z_in_mid_ena, Current_Z_in_msb_ena, Load_button, Start_button, New_calc_button, Toggle_display_button, XY_msb, End_cal)
   begin
 
-    Next_load_count   <= Current_load_count;
+    Next_load_count   <= load_count;
+    Next_Z_in_lsb_ena <= Current_Z_in_lsb_ena;
+    Next_Z_in_mid_ena <= Current_Z_in_mid_ena;
+    Next_Z_in_msb_ena <= Current_Z_in_msb_ena;
     Next_State        <= Idle;
     Next_XY_value_sel <= '0';
-    --Start_cal         <= '0';
+    Start_cal         <= '0';
     --Start_conv      <= '0';
     Led_sign          <= '0';
-    Z_lsb_reg_Ena     <= '0';
-    Z_mid_reg_Ena     <= '0';
-    Z_msb_reg_Ena     <= '0';
     --Op_code_reg_ena <= '0';
 
     case Current_State is
 
       when Idle =>
         Next_load_count <= (others => '0');
-        Start_cal <= '0';
 
         if (Load_button'event and (Load_button = '0')) then
-          Next_State    <= Load;
-          Next_load_count <= load_count + "001";
-          Z_lsb_reg_Ena <= '1';
+          Next_State <= Load;
+
+          Next_Z_in_lsb_ena <= '1';
+
         elsif (Start_button'event and (Start_button = '0')) then
           Start_cal <= '1';
         elsif (End_cal'event and (End_cal = '1')) then
           Next_State <= Display;
-        end if;  
+        end if;
 
       when Load =>
         Next_State <= Load;
-
         if (Load_button'event and (Load_button = '0')) then
           Next_load_count <= load_count + "001";
-          if (load_count = "001") then
-            Z_mid_reg_Ena <= '1';
-          elsif (load_count = "010") then
-            Z_msb_reg_Ena <= '1';
-          end if;
-          
         end if;
 
-        --case load_count is
+        if(load_count = "000" and (Load_button'event
+                                   and (Load_button = '1'))) then
+          Next_Z_in_lsb_ena <= '0';
+        end if;
 
-        --  when "001" =>
-        --    Z_mid_reg_Ena <= '1';
+        if (load_count = "000" and
+            (Load_button'event and (Load_button = '0'))) then
+          Next_Z_in_mid_ena <= '1';
+        elsif (load_count = "001" and
+               (Load_button'event and (Load_button = '1'))) then
+          Next_Z_in_mid_ena <= '0';
+        end if;
 
-        --  when "010" =>
-        --    Z_msb_reg_Ena <= '1';
+        if (load_count = "001" and
+            (Load_button'event and (Load_button = '0'))) then
+          Next_Z_in_msb_ena <= '1';
+        elsif (load_count = "010" and
+               (Load_button'event and (Load_button = '1'))) then
+          Next_Z_in_msb_ena <= '0';
+        end if;
 
-        --  when others =>
-        --    null;
-        --end case;
+
 
 
         --if (load_count = "011") then
@@ -118,13 +134,14 @@ begin
         --  Start_conv <= '1';
         --end if;
 
-        if (load_count = "011") then
+        if (load_count = "010" and
+            (Load_button'event and (Load_button = '1'))) then
           Next_State <= Idle;
         end if;
 
       when Display =>
-        Led_sign <= XY_msb;
-        Next_State <= Display;
+        Led_sign          <= XY_msb;
+        Next_State        <= Display;
         Next_XY_value_sel <= Current_XY_value_sel;
 
         if(Toggle_display_button'event and (Toggle_display_button = '0')) then
