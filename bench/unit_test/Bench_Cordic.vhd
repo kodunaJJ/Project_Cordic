@@ -42,15 +42,22 @@ architecture test of test_Cordic is
   signal Sig_output_value          : std_logic_vector(N-4 downto 0);
   signal Sig_Z_in                  : std_logic_vector(7 downto 0);
 
-  constant delay_2000 : time := 2000 ns; -- simu duration
-  constant delay_400 : time := 400 ns;
-  constant delay_200 : time := 200 ns;
-  constant delay_60  : time := 60 ns;
-  constant delay_10  : time := 10 ns;
-  constant delay_20  : time := 20 ns; -- Clk period
-  constant delay_5   : time := 5 ns;
-  constant delay_2   : time := 2 ns;
-  constant delay_1   : time := 1 ns;
+  constant delay_2000 : time := 2000 ns;  -- simu duration
+  constant delay_400  : time := 400 ns;
+  constant delay_200  : time := 200 ns;
+  constant delay_60   : time := 60 ns;
+  constant delay_10   : time := 10 ns;
+  constant delay_20   : time := 20 ns;    -- Clk period
+  constant delay_5    : time := 5 ns;
+  constant delay_2    : time := 2 ns;
+  constant delay_1    : time := 1 ns;
+
+  constant Button_press_duration   : time := 60 ns;
+  constant Button_release_duration : time := 80 ns;
+  constant Button_action           : time := Button_release_duration
+                                             +Button_press_duration;
+  constant Calcul_duration         : time := 750 ns;
+
 
 
 begin
@@ -75,80 +82,40 @@ begin
 
   Sig_Clk <= not Sig_Clk after delay_10;
 
-  --process_user_load : process(Sig_Load_button, Sig_Reset)
-  --  begin
-  --  Sig_Load_button <= '1';
-
-  --  if(Sig_Reset ='0') then
-
-  --    -- first time button pressed
-  --    Sig_Load_button <= '0' after delay_5;
-  --    Sig_Load_button <= '1' after 3*delay_10+delay_5;
-  --    -- second time button pressed
-  --    Sig_Load_button <= '0' after 3*delay_10+delay_5+delay_10;
-  --    Sig_Load_button <= '1' after 6*delay_10+delay_5+delay_10;
-  --    -- third time button pressed
-  --    Sig_Load_button <= '0' after 9*delay_10+delay_5+2*delay_10;
-  --    Sig_Load_button <= '1' after 9*delay_10+delay_5+3*delay_10;
-  --  else
-  --    Sig_Load_button <= '0';
-  --  end if;
-
-  --end process process_user_load;
-
-
-
   process
   begin
-    Sig_Z_in  <= "00001111", "11110000" after 6*delay_10+delay_5, "11001011" after 9*delay_10+delay_5+delay_10;
-    Sig_Reset <= '0'                    after 3*delay_10;
 
-    --Sig_Load_button <= '1';
+    -- Angle value definition
+    Sig_Z_in <= "00000000", "00001111" after Button_release_duration/2,
+                "11110000" after Button_action+Button_release_duration/2,
+                "11001001" after 2*Button_action+Button_release_duration/2;
+    Sig_Reset <= '0' after 3*delay_10;
 
-    Sig_Load_button <= '0' after 3*delay_10+delay_5, '1' after 6*delay_10+delay_5,  -- first time button pressed
-                       '0' after 6*delay_10+delay_5+delay_10, '1' after 9*delay_10+delay_5+delay_10,  -- second time button pressed      
-                       '0' after 12*delay_10+delay_5+delay_10, '1' after 12*delay_10+delay_5+3*delay_10;  -- third time button pressed
+-- user action to load the angle value
+    Sig_Load_button <= '0' after Button_release_duration,
+                       '1' after Button_action,    -- first time button pressed
+                       '0' after Button_action+Button_release_duration,
+                       '1' after 2*Button_action,  -- second time button pressed      
+                       '0' after 2*Button_action+Button_release_duration,
+                       '1' after 3*Button_action;  -- third time button pressed
 
-    Sig_Start_button <= '0' after 12*delay_10+delay_5+3*delay_10+3*delay_20, '1' after 12*delay_10+delay_5+3*delay_10+5*delay_20;
--- start calculation
+    Sig_Start_button <= '0' after 3*Button_action+Button_release_duration,
+                        '1' after 4*Button_action;  -- start calculation
 
-    Sig_Toggle_display_button <= '0' after 3*delay_400, '1' after 3*delay_400+2*delay_20, '0' after 3*delay_400+delay_2+4*delay_20, '1' after 3*delay_400+delay_2+6*delay_20;
+-- user action to display X or Y value calculated
+    Sig_Toggle_display_button <= '0' after 4*Button_action+Calcul_duration
+                                 +Button_release_duration,  -- display Y value
+                                 '1' after 5*Button_action+Calcul_duration,
+                                 '0' after 5*Button_action+Calcul_duration
+                                 +Button_release_duration,  -- display X value
+                                 '1' after 6*Button_action+Calcul_duration;
 
+    Sig_New_calc_button <= '0' after 6*Button_action+Calcul_duration
+                           +Button_release_duration,
+                           '1' after 7*Button_action+Calcul_duration;
 
-
-    --
-
-    --wait for delay_20*3;
-    --    Sig_Load_button <= '0';
-    ----    --Etat Load 1
-    --    Sig_Load_button <= '1';
-    --    wait for delay_20*3;
-    --    Sig_Load_button <= '0';
-    ----    --Etat Load 2
-    --    wait for delay_20*3;
-    --    Sig_Load_button <= '1';
-    --    wait for delay_20*3;
-    --    Sig_Load_button <= '0';
-    ----    --Etat Idle
-
-
-    --    Sig_End_cal <= '1';
-    --    wait for delay_20*5;
-    ----    --Etat Display
-    --    Sig_Toggle_display_button <= '0';
-    --    wait for delay_20*3;
-    --    Sig_New_calc_button <= '1';
-    --    wait for delay_20*3;
-    --    Sig_New_calc_button <= '0';
-    wait for delay_2000;
+    wait for 3*delay_2000;
+    assert false report " FIN DE LA SIMULATION" severity failure;
   end process;
-
-
-  --process
-  --begin
-  --  wait for delay_400;
-  --  assert false report " FIN DE LA SIMULATION" severity failure;
-  --end process;
-
 
 end architecture;
