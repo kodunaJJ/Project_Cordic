@@ -52,8 +52,8 @@ architecture test of test_Cordic is
   constant delay_2    : time := 2 ns;
   constant delay_1    : time := 1 ns;
 
-  constant Button_press_duration   : time := 60 ns;
-  constant Button_release_duration : time := 80 ns;
+  constant Button_press_duration   : time := 55 ns;
+  constant Button_release_duration : time := 75 ns;
   constant Button_action           : time := Button_release_duration
                                              +Button_press_duration;
   constant Calcul_duration         : time := 750 ns;

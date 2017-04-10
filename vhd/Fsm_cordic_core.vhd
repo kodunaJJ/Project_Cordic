@@ -84,6 +84,7 @@ begin
       when Idle =>
         if iteration_intern = 15 then
           Buff_OE <= '1';
+          End_cal <= '0';
         end if;
 
         if Start_cal = '1' then
@@ -99,7 +100,7 @@ begin
         Counter_reset <= '1';
 
       when Calculation =>
-        End_cal        <= '0';
+        --End_cal        <= '0';
         --Buff_IE_X_Y <= '1';
         Next_State     <= Calculation;
         --Buff_IE_Z   <= Clk;
