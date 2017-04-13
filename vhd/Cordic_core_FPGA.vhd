@@ -133,8 +133,6 @@ architecture A of Cordic_core_FPGA is
 
   -- Constant registers signals
 
-  signal X0_constant : std_logic_vector(N-1 downto 0) := "0011101100000000";
-  signal Y0_constant : std_logic_vector(N-1 downto 0) := "0000000000000000";
   signal Sig_X0      : std_logic_vector(N-1 downto 0);
   signal Sig_Y0      : std_logic_vector(N-1 downto 0);
 
@@ -208,7 +206,7 @@ begin
       N =>16)
     port map (                          -- X0 value
 
-      Constant_in => X0_constant,
+      Constant_in =>  "0011101100000000",
       Clk         => Clk,
       Reset       => Reset,
       Reg_out     => Sig_X0
@@ -218,7 +216,7 @@ begin
     generic map (
       N =>16)
     port map (                          -- Y0 value
-      Constant_in => Y0_constant,
+      Constant_in => (others => '0'),
       Clk         => Clk,
       Reset       => Reset,
       Reg_out     => Sig_Y0

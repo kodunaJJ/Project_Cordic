@@ -24,7 +24,8 @@ entity Cordic is
     Toggle_display_button : in  std_logic;
     End_cal               : out std_logic;
     Led_sign              : out std_logic;
-    XY_output             : out std_logic_vector(N-4 downto 0)
+    XY_output             : out std_logic_vector(N-4 downto 0);
+	 HEX_display : out std_logic_vector (27 downto 0)
     );
 end Cordic;
 
@@ -82,7 +83,7 @@ architecture A of Cordic is
          Toggle_display_button_event : in  std_logic;
          XY_msb                      : in  std_logic;
          End_cal_event               : in  std_logic;
-         Reset_button_event          : out std_logic;
+         --Reset_button_event          : out std_logic;
          --Reset_load_button_event_1    : out std_logic;
          Led_sign                    : out std_logic;
          XY_value_sel                : out std_logic;
@@ -91,8 +92,9 @@ architecture A of Cordic is
          Z_lsb_reg_Ena               : out std_logic;
          Z_mid_reg_Ena               : out std_logic;
          Z_msb_reg_Ena               : out std_logic;
-         Z_in_part_sel               : out std_logic_vector(2 downto 0)  -- lsb/mid/msb byte selection of Zin 
+         Z_in_part_sel               : out std_logic_vector(2 downto 0);  -- lsb/mid/msb byte selection of Zin 
          --Op_code_reg_ena       : out std_logic
+			State_display : out std_logic_vector (27 downto 0)
          );
   end component Fsm_UI;
 
@@ -129,6 +131,7 @@ architecture A of Cordic is
 
   component Button_fall_edge_detection is
     port(
+      Clk        : in  std_logic;
       Reset      : in  std_logic;
       Button_in  : in  std_logic;
       Button_out : out std_logic
@@ -137,6 +140,7 @@ architecture A of Cordic is
 
   component Button_rise_edge_detection is
     port(
+      Clk        : in  std_logic;
       Reset      : in  std_logic;
       Button_in  : in  std_logic;
       Button_out : out std_logic
@@ -177,14 +181,14 @@ architecture A of Cordic is
   signal Sig_XY_output : std_logic_vector(N-4 downto 0);
 
   -- button event signal
-  signal Sig_reset_event : std_logic;
+  signal Sig_reset_event                 : std_logic;
   --signal Sig_reset_load_button_event_1 : std_logic;
-  signal Sig_Load_pressed_event : std_logic;
-  signal Sig_Load_release_event : std_logic;
-  signal Sig_Start_button_event : std_logic;
-  signal Sig_New_calc_button_event : std_logic;
+  signal Sig_Load_pressed_event          : std_logic;
+  signal Sig_Load_release_event          : std_logic;
+  signal Sig_Start_button_event          : std_logic;
+  signal Sig_New_calc_button_event       : std_logic;
   signal Sig_Toggle_display_button_event : std_logic;
-  signal Sig_End_cal_event :std_logic;
+  signal Sig_End_cal_event               : std_logic;
   
 
 
@@ -242,11 +246,11 @@ begin
       Load_release_event          => Sig_Load_release_event,
       --Load_button => Load_button,
       Start_button_event          => Sig_Start_button_event,
-      New_calc_button_event       => Sig_Start_button_event,
+      New_calc_button_event       => Sig_New_calc_button_event,
       Toggle_display_button_event => Sig_Toggle_display_button_event,
       XY_msb                      => Sig_XY_msb,
       End_cal_event               => Sig_End_cal_event,
-      Reset_button_event          => Sig_reset_event,
+      --Reset_button_event          => Sig_reset_event,
       --Reset_load_button_event_1    => Sig_reset_load_button_event_1,
       Led_sign                    => Led_sign,
       XY_value_sel                => Sig_XY_value_sel,
@@ -254,7 +258,8 @@ begin
       Z_lsb_reg_Ena               => Sig_Z_lsb_reg_OE,
       Z_mid_reg_Ena               => Sig_Z_mid_reg_OE,
       Z_msb_reg_Ena               => Sig_Z_msb_reg_OE,
-      Z_in_part_sel               => Sig_Z_in_part_sel
+      Z_in_part_sel               => Sig_Z_in_part_sel,
+		State_display => Hex_display
       );
 
   In_buff_lsb : Buff
@@ -313,7 +318,8 @@ begin
 
   load_press : Button_fall_edge_detection
     port map (
-      Reset      => Sig_reset_event,
+      Clk        => Clk,
+      Reset      => Reset,
       Button_in  => Load_button,
       Button_out => Sig_Load_pressed_event
       );
@@ -321,34 +327,39 @@ begin
   
   load_release : Button_rise_edge_detection
     port map (
+      Clk        => Clk,
       --Reset      => Sig_reset_load_button_event_1,
-      Reset => Sig_reset_event,
+      Reset      => Reset,
       Button_in  => Load_button,
       Button_out => Sig_Load_release_event
       );
   start_press : Button_fall_edge_detection
     port map (
-      Reset      => Sig_reset_event,
+      Clk        => Clk,
+      Reset      => Reset,
       Button_in  => Start_button,
       Button_out => Sig_Start_button_event
       );
 
   new_cal_press : Button_fall_edge_detection
     port map (
-      Reset      => Sig_reset_event,
+      Clk        => Clk,
+      Reset      => Reset,
       Button_in  => New_calc_button,
       Button_out => Sig_New_calc_button_event
       );
 
   end_calc_press : Button_fall_edge_detection
     port map (
-      Reset      => Sig_reset_event,
+      Clk        => Clk,
+      Reset      => Reset,
       Button_in  => Sig_end_cal,
       Button_out => Sig_End_cal_event
       );
   Toggle_press : Button_fall_edge_detection
     port map (
-      Reset      => Sig_reset_event,
+      Clk        => Clk,
+      Reset      => Reset,
       Button_in  => Toggle_display_button,
       Button_out => Sig_Toggle_display_button_event
       );
