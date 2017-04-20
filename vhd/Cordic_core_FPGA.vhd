@@ -71,10 +71,9 @@ architecture A of Cordic_core_FPGA is
       Start_cal      : in  std_logic;
       iteration      : in  std_logic_vector(3 downto 0);
       Counter_enable : out std_logic;
-      Counter_reset  : out std_logic;
+      --Counter_reset  : out std_logic;
       End_cal        : out std_logic;
-      Buff_IE_X_Y    : out std_logic;
-      Buff_IE_Z      : out std_logic;
+      Buff_IE_XYZ    : out std_logic;
       Data_sel       : out std_logic;
       Rom_Address    : out std_logic_vector(3 downto 0);
       Shift_count_1  : out std_logic_vector(N-1 downto 0);  -- really
@@ -99,26 +98,11 @@ architecture A of Cordic_core_FPGA is
       Count_out    : out std_logic_vector(P-1 downto 0));
   end component Counter;
 
-  --component Clock_divider is
-  --  port (
-  --    Reset   : in  std_logic;
-  --    Clk     : in  std_logic;
-  --    Clk_out : out std_logic);
-  --end component Clock_divider;
-
-
-  --signal X_intern, Y_intern, Z_intern : std_logic_vector (15 downto 0);
   signal Data_sel_intern    : std_logic;
-  --signal START_CAL_intern             : std_logic;
-  --signal END_CAL_intern               : std_logic;
-  signal Buff_IE_X_Y_intern : std_logic;
-  signal Buff_IE_Z_intern   : std_logic;
+  signal Buff_IE_XYZ_intern   : std_logic;
   signal Buff_OE_intern     : std_logic;
   signal Rom_Address_intern : std_logic_vector(3 downto 0);
   signal Rom_out_intern     : std_logic_vector(15 downto 0);
-  --signal Buff_z_intern_out  : std_logic_vector(N-1 downto 0);  --
-  --preciser
-  --N !!!
 
   signal Iter_count    : std_logic_vector(3 downto 0);
   signal Shift_count_1 : std_logic_vector(4 downto 0);
@@ -126,15 +110,14 @@ architecture A of Cordic_core_FPGA is
   signal Sign_intern   : std_logic;
   signal Y_shifted     : std_logic_vector(N-1 downto 0);
   signal X_shifted     : std_logic_vector(N-1 downto 0);
-  --signal Clk_counter   : std_logic;
   signal Count_enable  : std_logic;
-  signal Count_reset   : std_logic;
+  --signal Count_reset   : std_logic;
   signal Sign_b        : std_logic;
 
   -- Constant registers signals
 
-  signal Sig_X0      : std_logic_vector(N-1 downto 0);
-  signal Sig_Y0      : std_logic_vector(N-1 downto 0);
+  --signal Sig_X0      : std_logic_vector(N-1 downto 0);
+  --signal Sig_Y0      : std_logic_vector(N-1 downto 0);
 
 
 begin
@@ -157,7 +140,7 @@ begin
       Angle     => Rom_out_intern,
       Sel       => Data_sel_intern,
       Sign      => Sign_b,
-      In_Enable => Buff_IE_Z_intern,
+      In_Enable => Buff_IE_XYZ_intern,
       Msb       => Sign_intern
       );
 
@@ -169,10 +152,10 @@ begin
 
       Clk           => Clk,
       Reset         => Reset,
-      Data_in       => Sig_X0,
+      Data_in       => "0011101100000000",
       Sel           => Data_sel_intern,
       Sign          => Sign_b,
-      In_Enable     => Buff_IE_X_Y_intern,
+      In_Enable     => Buff_IE_XYZ_intern,
       Out_Enable    => Buff_OE_intern,
       Data_in_i     => Y_shifted,
       Data_out_i    => X_shifted,
@@ -189,10 +172,10 @@ begin
 
       Clk           => Clk,
       Reset         => Reset,
-      Data_in       => Sig_Y0,
+      Data_in       => (others => '0'),
       Sel           => Data_sel_intern,
       Sign          => Sign_intern,
-      In_Enable     => Buff_IE_X_Y_intern,
+      In_Enable     => Buff_IE_XYZ_intern,
       Out_Enable    => Buff_OE_intern,
       Data_in_i     => X_shifted,
       Data_out_i    => Y_shifted,
@@ -201,26 +184,26 @@ begin
       Data_n        => Y_out
       );
 
-  X_constant : Constant_reg
-    generic map (
-      N =>16)
-    port map (                          -- X0 value
+  --X_constant : Constant_reg
+  --  generic map (
+  --    N =>16)
+  --  port map (                          -- X0 value
 
-      Constant_in =>  "0011101100000000",
-      Clk         => Clk,
-      Reset       => Reset,
-      Reg_out     => Sig_X0
-      );
+  --    Constant_in =>  "0011101100000000",
+  --    Clk         => Clk,
+  --    Reset       => Reset,
+  --    Reg_out     => Sig_X0
+  --    );
 
-  Y_constant : Constant_reg
-    generic map (
-      N =>16)
-    port map (                          -- Y0 value
-      Constant_in => (others => '0'),
-      Clk         => Clk,
-      Reset       => Reset,
-      Reg_out     => Sig_Y0
-      );
+  --Y_constant : Constant_reg
+  --  generic map (
+  --    N =>16)
+  --  port map (                          -- Y0 value
+  --    Constant_in => (others => '0'),
+  --    Clk         => Clk,
+  --    Reset       => Reset,
+  --    Reg_out     => Sig_Y0
+  --    );
 
 
   U6 : Fsm_cordic_core
@@ -232,10 +215,9 @@ begin
       Start_cal      => Start_cal,
       iteration      => Iter_count,
       Counter_enable => Count_enable,
-      Counter_reset  => Count_reset,
+      --Counter_reset  => Count_reset,
       End_cal        => End_cal,
-      Buff_IE_X_Y    => Buff_IE_X_Y_intern,
-      Buff_IE_Z      => Buff_IE_Z_intern,
+      Buff_IE_XYZ    => Buff_IE_XYZ_intern,
       Data_sel       => Data_sel_intern,
       Rom_Address    => Rom_Address_intern,
       Shift_count_1  => Shift_count_1,
@@ -243,18 +225,12 @@ begin
       Buff_OE        => Buff_OE_intern
       );
 
-  --U7 : Clock_divider port map (
-  --  Clk     => Clk,
-  --  Reset   => Reset,
-  --  Clk_out => Clk_counter
-  --  );
-
   U8 : Counter
     generic map (
       P => 4, N => 16)
     port map (
       Clk          => Clk,
-      Reset        => Count_reset,
+      Reset        => Reset,
       Count_enable => Count_enable,
       Count_out    => Iter_count
       );

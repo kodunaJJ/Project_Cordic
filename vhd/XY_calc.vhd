@@ -64,7 +64,6 @@ architecture A of XY_calc is
       );
   end component;
 
-  --signal Alu_out_2     : std_logic_vector(N-1 downto 0);
   signal Buff_in       : std_logic_vector(N-1 downto 0);   --maker 0
   signal Buff_in_2     : std_logic_vector(N-1 downto 0);   -- maker "3" pink
   signal Buff_out_1    : std_logic_vector(N-1 downto 0);   -- maker "1" pink
@@ -72,6 +71,7 @@ architecture A of XY_calc is
   signal A_2           : std_logic_vector (N-1 downto 0);  -- maker "4" pink
   signal Buff_in_3     : std_logic_vector(N-1 downto 0);   -- maker "5" pink 
   signal Shifter_out_1 : std_logic_vector (N-1 downto 0);
+  signal Buff_out_2 : std_logic_vector(N-1 downto 0);
 begin  -- A
   U1 : Mux2x1
     generic map(N => 16)
@@ -103,7 +103,7 @@ begin  -- A
     generic map (N => 16,
                  P => 5)
     port map (
-      Shifter_in  => Shifter_out_1,
+      Shifter_in  => Buff_out_2,
       Shifter_out => Shifter_out_2,
       Shift_count => Shift_count_2
       );
@@ -112,8 +112,8 @@ begin  -- A
     generic map (N => 16)
     port map (
       A   => Buff_out_1,
-      B   => Shifter_out_2,
-      Cmd => '1',
+      B   => Data_in_i,
+      Cmd => Sign,
       S   => Buff_in_2);
 
   U6 : Buff                             -- ALU 1 Buffer
@@ -125,13 +125,22 @@ begin  -- A
       Clk      => Clk,
       Reset    => Reset
       );
+    test_buff : Buff                             -- barrel 2 Buffer
+    generic map (N => 16)
+    port map (
+      Buff_in  => Shifter_out_1,
+      Buff_out => Buff_out_2,
+      Buff_OE  => '1',
+      Clk      => Clk,
+      Reset    => Reset
+      );
 
   U7 : Alu                              -- ALU 2 
     generic map (N => 16)
     port map (
       A   => A_2,
-      B   => Data_in_i,
-      Cmd => Sign,
+      B   => Shifter_out_2,
+      Cmd => '1',
       S   => Buff_in_3
       );
   U8 : Buff                             --  Output Buffer
