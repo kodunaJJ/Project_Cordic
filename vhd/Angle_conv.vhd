@@ -1,11 +1,18 @@
 ------------------------------Angle_conv.vhd--------------------------------
+
+-- CONVERT AN ANGLE GIVEN IN RADIANS UNIT BETWEEN -2pi/2pi TO -pi/4,pi/4
+-- AND GENERATE SIGNALS CMD TO TRANSFORM THE RESULT AT THE END WITH
+-- SIN_COS_ATTRIBUTION
+
+----------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Angle_conv is
   generic (
-    N : positive);
+    N : positive -- data size
+    );
   port (Clk            : in  std_logic;
         Reset          : in  std_logic;
         Z_in           : in  std_logic_vector(N-1 downto 0);
@@ -36,19 +43,11 @@ architecture A of Angle_conv is
           Mux_out  : out std_logic_vector (N-1 downto 0));
   end component;
 
-  --component Dmux1x2
-  --  generic (
-  --    N : positive);
-  --  port (in         : in  std_logic_vector(N-1 downto 0);
-  --        Sel        : in  std_logic;
-  --        Out1, Out2 : out std_logic_vector (N-1 downto 0));
-  --end component;
-
   component Alu
     generic (
       N : positive);
     port (
-      A, B : in  std_logic_vector(N-1 downto 0);  --vrai ou pas
+      A, B : in  std_logic_vector(N-1 downto 0);
       Cmd  : in  std_logic;
       S    : out std_logic_vector(N-1 downto 0));
   end component;
@@ -79,8 +78,6 @@ architecture A of Angle_conv is
   signal Sig_data_sel : std_logic_vector(3 downto 0);
 
 begin  -- A
-
-  --Demux : Dmux1x2
 
   Mux : Mux2x1
     generic map (

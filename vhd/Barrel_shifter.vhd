@@ -1,3 +1,8 @@
+-----------------------------BARREL_SHIFTER.vhd---------------------------------------------
+
+-- PERFORM A RIGHT SHIFT OF SHIFT_COUNT WITH ON (UN)SIGNED DATA
+
+--------------------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -6,8 +11,9 @@ use ieee.numeric_std.all;
 entity Barrel_shifter is
   
   generic (
-    N : positive;
-    P : positive);
+    N : positive; -- data size
+    P : positive -- shift count signal size
+    );
   port (
     Shifter_in : in std_logic_vector(N-1 downto 0);
     Shift_count : in std_logic_vector(P-1 downto 0);                         

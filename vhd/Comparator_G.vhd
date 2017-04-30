@@ -1,10 +1,19 @@
+-----------------------COMPARATOR_G.vhd----------------------------
+
+-- GREATER THAN COMPARATION ON POSITIVE VALUE ONLY
+-- OUTPUT ON HIGH LEVEL IF TRUE
+
+-------------------------------------------------------------------
+
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Comparator_G is
   generic (
-    N : positive);
+    N : positive -- data_size
+    );
 
   port (A, B : in  std_logic_vector(N-1 downto 0);
         S    : out std_logic
@@ -20,11 +29,6 @@ begin
   A_u <= unsigned(A);
   B_u <= unsigned(B);
   
-  --if (A_u >= B_u) then
-  --  S <= '1';
-  --else
-  --  S <= '0';
-  --end if;
     S <= '1' when (A_u > B_u) else '0';
   
 end architecture;

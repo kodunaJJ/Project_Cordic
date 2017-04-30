@@ -1,4 +1,8 @@
 ------------------------------fsm_core.vhd----------------------------------------
+
+-- FSM CONTROLLING THE CALCULATION OF SINE AND COSINE VALUE
+
+----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -6,15 +10,13 @@ use IEEE.numeric_std.all;
 
 entity Fsm_cordic_core is
   generic (
-    N : positive
+    N : positive -- data_size
     );
   port(Clk            : in  std_logic;
        Reset          : in  std_logic;
        Start_cal      : in  std_logic;
        iteration      : in  std_logic_vector(3 downto 0);
        Counter_enable : out std_logic;
-       --Counter_load : out std_logic;
-       --Count_data: out std_logic_vector( 3 downto 0);
        Counter_reset  : out std_logic;
        End_cal        : out std_logic;
        Buff_IE_X_Y    : out std_logic;
@@ -26,7 +28,6 @@ entity Fsm_cordic_core is
        Buff_OE        : out std_logic);
 end Fsm_cordic_core;
 
--- Machine à états contrôlant le calcul des coordonnées.
 
 architecture A of Fsm_cordic_core is
   type STATE is (Idle, Calculation);
@@ -34,10 +35,7 @@ architecture A of Fsm_cordic_core is
   signal Current_State, Next_State         : State;
   signal Current_Buff_IE_Z, Next_Buff_IE_Z : std_logic;
   signal Current_data_sel, Next_data_sel   : std_logic;
-  --signal Current_Counter_enable, Next_Counter_enable : std_logic;
-  --signal Buff_IE_Z_int                     : std_logic;
   signal iteration_intern                  : unsigned(iteration'range);
-  --signal iteration_intern_incd             : unsigned(iteration'range);
 
 begin
 
@@ -45,7 +43,6 @@ begin
   iteration_intern <= unsigned(iteration);
   Shift_count_1    <= std_logic_vector(('0'& unsigned(iteration))+1);
   Shift_count_2    <= std_logic_vector(('0'& unsigned(iteration))+3);
-  --Buff_IE_Z_int    <= Current_Buff_IE_Z;
   Buff_IE_Z        <= Current_Buff_IE_Z;
   Buff_IE_X_Y      <= Current_Buff_IE_Z;
   Data_sel         <= Current_data_sel;
@@ -71,9 +68,7 @@ begin
     Next_State     <= Idle;
     Next_Data_sel  <= '0';
     End_cal        <= '1';
-    --Buff_IE_X_Y    <= '0';
-    --Buff_IE_Z      <= '0';
-    Next_Buff_IE_Z <= '0';              -- a voir
+    Next_Buff_IE_Z <= '0';
     Buff_OE        <= '0';
     Counter_reset  <= '0';
     Counter_enable <= '0';
@@ -89,21 +84,16 @@ begin
 
         if Start_cal = '1' then
           Next_Buff_IE_Z <= '1';
-        --Next_State <= Calculation;
         end if;
 
         if Current_Buff_IE_Z = '1' then
           Next_State <= Calculation;
         end if;
 
-        --Counter_enable <= '0';
         Counter_reset <= '1';
 
       when Calculation =>
-        --End_cal        <= '0';
-        --Buff_IE_X_Y <= '1';
         Next_State     <= Calculation;
-        --Buff_IE_Z   <= Clk;
         Next_Buff_IE_Z <= not Current_Buff_IE_Z;
         Counter_enable <= Current_Buff_IE_Z and Current_data_sel;
 

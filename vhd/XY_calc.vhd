@@ -1,11 +1,19 @@
+---------------------------XY_CALC.vhd-----------------------
+
+-- CALCULATE ONE COORDINATE (X OR Y) OF THE DOUBLE ROTATION
+-- CORDIC ALGIRITHM
+
+-------------------------------------------------------------
+
 library IEEE;
 use IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity XY_calc is
   generic (
-    N : positive;
-    P : positive);
+    N : positive; -- data_size
+    P : positive  -- shift_count_ data_size
+    );
   port (
     Clk           : in  std_logic;
     Reset         : in  std_logic;
@@ -48,7 +56,7 @@ architecture A of XY_calc is
     generic (
       N : positive);
     port (
-      A, B : in  std_logic_vector(N-1 downto 0);  --vrai ou pas
+      A, B : in  std_logic_vector(N-1 downto 0); 
       Cmd  : in  std_logic;
       S    : out std_logic_vector(N-1 downto 0));
   end component;
@@ -64,7 +72,6 @@ architecture A of XY_calc is
       );
   end component;
 
-  --signal Alu_out_2     : std_logic_vector(N-1 downto 0);
   signal Buff_in       : std_logic_vector(N-1 downto 0);   --maker 0
   signal Buff_in_2     : std_logic_vector(N-1 downto 0);   -- maker "3" pink
   signal Buff_out_1    : std_logic_vector(N-1 downto 0);   -- maker "1" pink
@@ -91,7 +98,7 @@ begin  -- A
       Reset    => Reset
       );
 
-  U3 : Barrel_shifter                   -- Shifter i in the shematic
+  U3 : Barrel_shifter                   -- Shifter i+1 in the shematic
     generic map (N => 16,
                  P => 5)
     port map (
@@ -99,7 +106,7 @@ begin  -- A
       Shifter_out => Shifter_out_1,
       Shift_count => Shift_count_1);
 
-  U4 : Barrel_shifter                   -- Shifter "i+2" in the shematic
+  U4 : Barrel_shifter                   -- Shifter "i+3" in the shematic
     generic map (N => 16,
                  P => 5)
     port map (

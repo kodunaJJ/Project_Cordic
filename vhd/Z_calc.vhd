@@ -1,20 +1,26 @@
+-------------------------------Z_CALC.vhd-------------------------
 
+-- CALCULATE THE Z VARIABLE OF THE DOUBLE ROTATION CORDIC ALGORITHM
+
+------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Z_calc is
   generic (
-    N : positive);
+    N : positive -- data_size
+    );
   port (
-    Z0        : in  std_logic_vector(N-1 downto 0);
-    Angle     : in  std_logic_vector(N-1 downto 0);
+    Z0        : in  std_logic_vector(N-1 downto 0); -- input angle
+    Angle     : in  std_logic_vector(N-1 downto 0); -- ROM angle
     Sel       : in  std_logic;
     Sign      : in  std_logic;
     In_Enable : in  std_logic;
     Clk       : in  std_logic;
     Reset     : in  std_logic;
-    Msb       : out std_logic);
+    Msb       : out std_logic
+    );
 end Z_calc;
 
 architecture A of Z_calc is
@@ -42,12 +48,11 @@ architecture A of Z_calc is
     generic (
       N : positive);
     port (
-      A, B : in  std_logic_vector(N-1 downto 0);  --vrai ou pas
+      A, B : in  std_logic_vector(N-1 downto 0); 
       Cmd  : in  std_logic;
       S    : out std_logic_vector(N-1 downto 0));
   end component;
 
-  --N : positive := 16;
   signal Mux_out  : std_logic_vector(N-1 downto 0);
   signal Buff_out : std_logic_vector(N-1 downto 0);
   signal Alu_out  : std_logic_vector(N-1 downto 0);

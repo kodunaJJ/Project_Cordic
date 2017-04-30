@@ -1,4 +1,9 @@
------------------------------cordic_core.vhd----------------------------------------
+-----------------------------cordic_core_FPGA.vhd----------------------------------------
+
+-- PERFORM THE CALCULATION OF SINE AND COSINE VALUE BASED ON THE DOUBLE ROTATION
+-- CORDIC ALGORITHM 
+
+-----------------------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -77,8 +82,7 @@ architecture A of Cordic_core_FPGA is
       Buff_IE_Z      : out std_logic;
       Data_sel       : out std_logic;
       Rom_Address    : out std_logic_vector(3 downto 0);
-      Shift_count_1  : out std_logic_vector(N-1 downto 0);  -- really
-                                                            -- needed ??
+      Shift_count_1  : out std_logic_vector(N-1 downto 0);
       Shift_count_2  : out std_logic_vector(N-1 downto 0);
       Buff_OE        : out std_logic);
   end component;
@@ -99,26 +103,13 @@ architecture A of Cordic_core_FPGA is
       Count_out    : out std_logic_vector(P-1 downto 0));
   end component Counter;
 
-  --component Clock_divider is
-  --  port (
-  --    Reset   : in  std_logic;
-  --    Clk     : in  std_logic;
-  --    Clk_out : out std_logic);
-  --end component Clock_divider;
 
-
-  --signal X_intern, Y_intern, Z_intern : std_logic_vector (15 downto 0);
   signal Data_sel_intern    : std_logic;
-  --signal START_CAL_intern             : std_logic;
-  --signal END_CAL_intern               : std_logic;
   signal Buff_IE_X_Y_intern : std_logic;
   signal Buff_IE_Z_intern   : std_logic;
   signal Buff_OE_intern     : std_logic;
   signal Rom_Address_intern : std_logic_vector(3 downto 0);
   signal Rom_out_intern     : std_logic_vector(15 downto 0);
-  --signal Buff_z_intern_out  : std_logic_vector(N-1 downto 0);  --
-  --preciser
-  --N !!!
 
   signal Iter_count    : std_logic_vector(3 downto 0);
   signal Shift_count_1 : std_logic_vector(4 downto 0);
@@ -126,7 +117,6 @@ architecture A of Cordic_core_FPGA is
   signal Sign_intern   : std_logic;
   signal Y_shifted     : std_logic_vector(N-1 downto 0);
   signal X_shifted     : std_logic_vector(N-1 downto 0);
-  --signal Clk_counter   : std_logic;
   signal Count_enable  : std_logic;
   signal Count_reset   : std_logic;
   signal Sign_b        : std_logic;
@@ -206,7 +196,7 @@ begin
       N =>16)
     port map (                          -- X0 value
 
-      Constant_in =>  "0011101100000000",
+      Constant_in =>  "0011101100000000", --0.9219
       Clk         => Clk,
       Reset       => Reset,
       Reg_out     => Sig_X0
@@ -242,12 +232,6 @@ begin
       Shift_count_2  => Shift_count_2,
       Buff_OE        => Buff_OE_intern
       );
-
-  --U7 : Clock_divider port map (
-  --  Clk     => Clk,
-  --  Reset   => Reset,
-  --  Clk_out => Clk_counter
-  --  );
 
   U8 : Counter
     generic map (
