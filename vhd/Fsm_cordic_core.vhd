@@ -1,4 +1,8 @@
 ------------------------------fsm_core.vhd----------------------------------------
+
+-- FSM CONTROLLING THE CALCULATION OF SINE AND COSINE VALUE
+
+----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -6,7 +10,7 @@ use IEEE.numeric_std.all;
 
 entity Fsm_cordic_core is
   generic (
-    N : positive
+    N : positive                        -- data_size
     );
   port(Clk            : in  std_logic;
        Reset          : in  std_logic;
@@ -21,8 +25,6 @@ entity Fsm_cordic_core is
        Shift_count_2  : out std_logic_vector(N-1 downto 0);
        Buff_OE        : out std_logic);
 end Fsm_cordic_core;
-
--- Machine à états contrôlant le calcul des coordonnées.
 
 architecture A of Fsm_cordic_core is
   type STATE is (Idle, Calculation);
@@ -62,7 +64,7 @@ begin
     Next_State     <= Idle;
     Next_Data_sel  <= '0';
     End_cal        <= '1';
-    Next_Buff_IE_Z <= '0';              -- a voir
+    Next_Buff_IE_Z <= '0';
     Buff_OE        <= '0';
     Counter_enable <= '0';
 

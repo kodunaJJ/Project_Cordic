@@ -1,12 +1,17 @@
 -----------------------------Sin_Cos_attribution.vhd-----------------------------
 
+-- ALLOW SWITCHING CORDIC_CORE_FPGA OUTPUT VALUE AND *(-1) IN ORDER TO HAVE THE
+-- CORRECT VALUE OF SINE AND CONINE ACCORDINGLY TO CMD SIGNAL
+
+---------------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Sin_Cos_attribution is
   generic (
-    N : positive);
+    N : positive                        -- data_size
+    );
   port (Clk         : in  std_logic;
         Reset       : in  std_logic;
         X           : in  std_logic_vector(N-1 downto 0);
@@ -38,18 +43,18 @@ architecture A of Sin_Cos_attribution is
          Buff_Out : out std_logic_vector(N-1 downto 0));
   end component;
 
-  constant ONE:   UNSIGNED(X'RANGE) := to_unsigned(0, X'length-1)&'1';
+  constant ONE : unsigned(X'range) := to_unsigned(0, X'length-1)&'1';
 
   signal Switch_cmd     : std_logic;
-  signal X_sign_cmd    : std_logic;
-  signal Y_sign_cmd    : std_logic;
+  signal X_sign_cmd     : std_logic;
+  signal Y_sign_cmd     : std_logic;
   signal X_complement   : std_logic_vector(N-1 downto 0);
   signal Y_complement   : std_logic_vector(N-1 downto 0);
   signal Mux_comp_X_out : std_logic_vector(N-1 downto 0);
   signal Mux_comp_Y_out : std_logic_vector(N-1 downto 0);
   signal Mux_X_out      : std_logic_vector(N-1 downto 0);
   signal Mux_Y_out      : std_logic_vector(N-1 downto 0);
-  
+
 
 
 begin
@@ -116,11 +121,11 @@ begin
       Buff_Out => Y_Out
       );
 
-  Switch_cmd <= cmd(0) xor cmd(1) xor cmd(2) xor cmd(3); -- X and Y switched if xor(cmd) = '1'
-  X_sign_cmd <= cmd(2) or not(cmd(0)); -- positive sign if true
-  Y_sign_cmd <= not(cmd(1)) or cmd(3); -- positive sign if true
+  Switch_cmd <= cmd(0) xor cmd(1) xor cmd(2) xor cmd(3);  -- X and Y switched if xor(cmd) = '1'
+  X_sign_cmd <= cmd(2) or not(cmd(0));  -- positive sign if true
+  Y_sign_cmd <= not(cmd(1)) or cmd(3);  -- positive sign if true
 
   X_complement <= std_logic_vector(unsigned(not(Mux_X_out))+ ONE);
-  Y_complement <= std_logic_vector(unsigned(not(Mux_Y_out))+ ONE);                                 
+  Y_complement <= std_logic_vector(unsigned(not(Mux_Y_out))+ ONE);
 
 end architecture;

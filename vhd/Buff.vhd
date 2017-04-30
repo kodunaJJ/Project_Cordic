@@ -1,12 +1,16 @@
 -------------------------------buffer.vhd-----------------------------------------
 
+-- JUST A SIMPLE REGISTER WITH OUTPUT ENABLE CMD ON HIGH LEVEL WITH SYNCHRONOUS RESET
+
+----------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
 
 
 entity Buff is
   generic (
-    N : positive);
+    N : positive -- data size
+    );
   port (
     Buff_in  : in  std_logic_vector(N-1 downto 0);
     Buff_OE  : in  std_logic;

@@ -1,3 +1,10 @@
+---------------------------COUNTER.vhd--------------------------
+
+-- SIMPLE COUNTER WITH COUNT ENABLE INPUT AND SYNCHRONOUS RESET
+-- WHEN AT MAX COUNT VALUE STARTS AGAIN
+
+----------------------------------------------------------------
+
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;

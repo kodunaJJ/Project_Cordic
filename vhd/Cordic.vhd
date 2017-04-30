@@ -12,12 +12,12 @@ use IEEE.numeric_std.all;
 
 entity Cordic is
   generic (
-    N : positive := 19);
+    N : positive := 19                  -- angle input value data size
+    );
   port(
-    Z_in                  : in  std_logic_vector(7 downto 0);  --change for bench
+    Z_in                  : in  std_logic_vector(7 downto 0);
     Clk                   : in  std_logic;
     Reset                 : in  std_logic;
-    --Start_conv   : in  std_logic;
     Load_button           : in  std_logic;
     Start_button          : in  std_logic;
     New_calc_button       : in  std_logic;
@@ -25,7 +25,9 @@ entity Cordic is
     End_cal               : out std_logic;
     Led_sign              : out std_logic;
     XY_output             : out std_logic_vector(N-4 downto 0);
-	 HEX_display : out std_logic_vector (27 downto 0)
+    HEX_display           : out std_logic_vector (27 downto 0) -- 7-segments
+                                                               -- displayed
+                                                               -- value
     );
 end Cordic;
 
@@ -77,24 +79,19 @@ architecture A of Cordic is
          Reset                       : in  std_logic;
          Load_pressed_event          : in  std_logic;
          Load_release_event          : in  std_logic;
-         --Load_button : in std_logic;
          Start_button_event          : in  std_logic;
          New_calc_button_event       : in  std_logic;
          Toggle_display_button_event : in  std_logic;
          XY_msb                      : in  std_logic;
          End_cal_event               : in  std_logic;
-         --Reset_button_event          : out std_logic;
-         --Reset_load_button_event_1    : out std_logic;
          Led_sign                    : out std_logic;
          XY_value_sel                : out std_logic;
-         --Start_conv            : out std_logic;
          Start_cal                   : out std_logic;
          Z_lsb_reg_Ena               : out std_logic;
          Z_mid_reg_Ena               : out std_logic;
          Z_msb_reg_Ena               : out std_logic;
          Z_in_part_sel               : out std_logic_vector(2 downto 0);  -- lsb/mid/msb byte selection of Zin 
-         --Op_code_reg_ena       : out std_logic
-			State_display : out std_logic_vector (27 downto 0)
+         State_display               : out std_logic_vector (27 downto 0)
          );
   end component Fsm_UI;
 
@@ -182,14 +179,13 @@ architecture A of Cordic is
 
   -- button event signal
   signal Sig_reset_event                 : std_logic;
-  --signal Sig_reset_load_button_event_1 : std_logic;
   signal Sig_Load_pressed_event          : std_logic;
   signal Sig_Load_release_event          : std_logic;
   signal Sig_Start_button_event          : std_logic;
   signal Sig_New_calc_button_event       : std_logic;
   signal Sig_Toggle_display_button_event : std_logic;
   signal Sig_End_cal_event               : std_logic;
-  
+
 
 
 begin
@@ -244,14 +240,11 @@ begin
       Reset                       => Reset,
       Load_pressed_event          => Sig_Load_pressed_event,
       Load_release_event          => Sig_Load_release_event,
-      --Load_button => Load_button,
       Start_button_event          => Sig_Start_button_event,
       New_calc_button_event       => Sig_New_calc_button_event,
       Toggle_display_button_event => Sig_Toggle_display_button_event,
       XY_msb                      => Sig_XY_msb,
       End_cal_event               => Sig_End_cal_event,
-      --Reset_button_event          => Sig_reset_event,
-      --Reset_load_button_event_1    => Sig_reset_load_button_event_1,
       Led_sign                    => Led_sign,
       XY_value_sel                => Sig_XY_value_sel,
       Start_cal                   => Sig_start_cal,
@@ -259,7 +252,7 @@ begin
       Z_mid_reg_Ena               => Sig_Z_mid_reg_OE,
       Z_msb_reg_Ena               => Sig_Z_msb_reg_OE,
       Z_in_part_sel               => Sig_Z_in_part_sel,
-		State_display => Hex_display
+      State_display               => Hex_display
       );
 
   In_buff_lsb : Buff
@@ -324,11 +317,10 @@ begin
       Button_out => Sig_Load_pressed_event
       );
 
-  
+
   load_release : Button_rise_edge_detection
     port map (
       Clk        => Clk,
-      --Reset      => Sig_reset_load_button_event_1,
       Reset      => Reset,
       Button_in  => Load_button,
       Button_out => Sig_Load_release_event
@@ -363,14 +355,12 @@ begin
       Button_in  => Toggle_display_button,
       Button_out => Sig_Toggle_display_button_event
       );
-  --Sig_Z_in_angle_conv <= (Z_in_msb & Z_in_mid & Z_in_lsb);
+  
   Sig_Z_in_angle_conv(7 downto 0)   <= Z_lsb;
   Sig_Z_in_angle_conv(15 downto 8)  <= Z_mid;
   Sig_Z_in_angle_conv(18 downto 16) <= Z_msb(2 downto 0);
-  --Sig_Z_in      <= Z_in;                --change for bench
-  --Sig_start_cal <= Start_cal;           -- change for bench
   End_cal                           <= Sig_end_cal;    -- end_cal : cordic_FPGA
   Sig_XY_msb                        <= Sig_XY_output(N-4);
   XY_output                         <= Sig_XY_output;  -- value to display
-  
+
 end architecture;

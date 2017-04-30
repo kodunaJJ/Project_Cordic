@@ -1,3 +1,9 @@
+--------------------BUTTON_FALL_EDGE_DETECTION.vhd-------------------------
+
+-- USED TO DETECT A PRESSED ACTION ON A BUTTON WITH SYNCHRONOUS RESET
+-- IF ACTION DETECTED => OUTPUT ON HIGH LEVEL FOR 1 CLK CYCLE
+
+---------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;

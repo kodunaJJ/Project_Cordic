@@ -1,12 +1,15 @@
 -----------------------------Dmux1x3.vhd-------------------------------------
 
+-- SIMPLE DEMULTIPLEXER
+
+-----------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity Dmux1x3 is
   generic (
-    N : positive
+    N : positive -- data_size
     );
   port(
     Input : in  std_logic_vector(N-1 downto 0);

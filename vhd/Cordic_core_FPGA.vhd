@@ -1,4 +1,9 @@
------------------------------cordic_core.vhd----------------------------------------
+-----------------------------cordic_core_FPGA.vhd----------------------------------------
+
+-- PERFORM THE CALCULATION OF SINE AND COSINE VALUE BASED ON THE DOUBLE ROTATION
+-- CORDIC ALGORITHM 
+
+-----------------------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -71,13 +76,11 @@ architecture A of Cordic_core_FPGA is
       Start_cal      : in  std_logic;
       iteration      : in  std_logic_vector(3 downto 0);
       Counter_enable : out std_logic;
-      --Counter_reset  : out std_logic;
       End_cal        : out std_logic;
       Buff_IE_XYZ    : out std_logic;
       Data_sel       : out std_logic;
       Rom_Address    : out std_logic_vector(3 downto 0);
-      Shift_count_1  : out std_logic_vector(N-1 downto 0);  -- really
-                                                            -- needed ??
+      Shift_count_1  : out std_logic_vector(N-1 downto 0);
       Shift_count_2  : out std_logic_vector(N-1 downto 0);
       Buff_OE        : out std_logic);
   end component;
@@ -111,14 +114,7 @@ architecture A of Cordic_core_FPGA is
   signal Y_shifted     : std_logic_vector(N-1 downto 0);
   signal X_shifted     : std_logic_vector(N-1 downto 0);
   signal Count_enable  : std_logic;
-  --signal Count_reset   : std_logic;
   signal Sign_b        : std_logic;
-
-  -- Constant registers signals
-
-  --signal Sig_X0      : std_logic_vector(N-1 downto 0);
-  --signal Sig_Y0      : std_logic_vector(N-1 downto 0);
-
 
 begin
 
@@ -152,7 +148,7 @@ begin
 
       Clk           => Clk,
       Reset         => Reset,
-      Data_in       => "0011101100000000",
+      Data_in       => "0011101100000000", -- 0.9219
       Sel           => Data_sel_intern,
       Sign          => Sign_b,
       In_Enable     => Buff_IE_XYZ_intern,
@@ -184,28 +180,6 @@ begin
       Data_n        => Y_out
       );
 
-  --X_constant : Constant_reg
-  --  generic map (
-  --    N =>16)
-  --  port map (                          -- X0 value
-
-  --    Constant_in =>  "0011101100000000",
-  --    Clk         => Clk,
-  --    Reset       => Reset,
-  --    Reg_out     => Sig_X0
-  --    );
-
-  --Y_constant : Constant_reg
-  --  generic map (
-  --    N =>16)
-  --  port map (                          -- Y0 value
-  --    Constant_in => (others => '0'),
-  --    Clk         => Clk,
-  --    Reset       => Reset,
-  --    Reg_out     => Sig_Y0
-  --    );
-
-
   U6 : Fsm_cordic_core
     generic map (
       N => 5)
@@ -215,7 +189,6 @@ begin
       Start_cal      => Start_cal,
       iteration      => Iter_count,
       Counter_enable => Count_enable,
-      --Counter_reset  => Count_reset,
       End_cal        => End_cal,
       Buff_IE_XYZ    => Buff_IE_XYZ_intern,
       Data_sel       => Data_sel_intern,
